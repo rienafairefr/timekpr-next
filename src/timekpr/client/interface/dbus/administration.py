@@ -30,7 +30,11 @@ class timekprAdminConnector(object):
         self._initFailed = False
 
         # dbus (timekpr)
-        self._timekprBus = (dbus.SessionBus() if (cons.TK_DEV_ACTIVE and cons.TK_DEV_BUS == "ses") else dbus.SystemBus())
+        self._timekprBus = (
+            dbus.SessionBus()
+            if (cons.TK_DEV_ACTIVE and cons.TK_DEV_BUS == "ses")
+            else dbus.SystemBus()
+        )
         self._timekprObject = None
         self._timekprUserAdminDbusInterface = None
         self._timekprAdminDbusInterface = None
@@ -52,27 +56,44 @@ class timekprAdminConnector(object):
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # timekpr connection stuff
-                self._timekprObject = self._timekprBus.get_object(cons.TK_DBUS_BUS_NAME, cons.TK_DBUS_SERVER_PATH)
+                self._timekprObject = self._timekprBus.get_object(
+                    cons.TK_DBUS_BUS_NAME, cons.TK_DBUS_SERVER_PATH
+                )
                 # measurement logging
-                misc.measureDBUSTimeElapsed(pStop=True, pPrintToConsole=True, pDbusIFName=cons.TK_DBUS_BUS_NAME)
+                misc.measureDBUSTimeElapsed(
+                    pStop=True, pPrintToConsole=True, pDbusIFName=cons.TK_DBUS_BUS_NAME
+                )
             except Exception:
                 self._timekprObject = None
                 # logging
-                log.consoleOut("FAILED to obtain connection to timekpr.\nPlease check that timekpr daemon is working and you have sufficient permissions to access it (either superuser or timekpr group)")
+                log.consoleOut(
+                    "FAILED to obtain connection to timekpr.\nPlease check that timekpr daemon is working and you have sufficient permissions to access it (either superuser or timekpr group)"
+                )
 
             # only if notifications are ok
-        if self._timekprObject is not None and self._timekprUserAdminDbusInterface is None:
+        if (
+            self._timekprObject is not None
+            and self._timekprUserAdminDbusInterface is None
+        ):
             try:
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # getting interface
-                self._timekprUserAdminDbusInterface = dbus.Interface(self._timekprObject, cons.TK_DBUS_USER_ADMIN_INTERFACE)
+                self._timekprUserAdminDbusInterface = dbus.Interface(
+                    self._timekprObject, cons.TK_DBUS_USER_ADMIN_INTERFACE
+                )
                 # measurement logging
-                misc.measureDBUSTimeElapsed(pStop=True, pPrintToConsole=True, pDbusIFName=cons.TK_DBUS_USER_ADMIN_INTERFACE)
+                misc.measureDBUSTimeElapsed(
+                    pStop=True,
+                    pPrintToConsole=True,
+                    pDbusIFName=cons.TK_DBUS_USER_ADMIN_INTERFACE,
+                )
             except Exception:
                 self._timekprUserAdminDbusInterface = None
                 # logging
-                log.consoleOut("FAILED to connect to timekpr user admin interface.\nPlease check that timekpr daemon is working and you have sufficient permissions to access it (either superuser or timekpr group)")
+                log.consoleOut(
+                    "FAILED to connect to timekpr user admin interface.\nPlease check that timekpr daemon is working and you have sufficient permissions to access it (either superuser or timekpr group)"
+                )
 
             # only if notifications are ok
         if self._timekprObject is not None and self._timekprAdminDbusInterface is None:
@@ -80,18 +101,32 @@ class timekprAdminConnector(object):
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # getting interface
-                self._timekprAdminDbusInterface = dbus.Interface(self._timekprObject, cons.TK_DBUS_ADMIN_INTERFACE)
+                self._timekprAdminDbusInterface = dbus.Interface(
+                    self._timekprObject, cons.TK_DBUS_ADMIN_INTERFACE
+                )
                 # measurement logging
-                misc.measureDBUSTimeElapsed(pStop=True, pPrintToConsole=True, pDbusIFName=cons.TK_DBUS_ADMIN_INTERFACE)
+                misc.measureDBUSTimeElapsed(
+                    pStop=True,
+                    pPrintToConsole=True,
+                    pDbusIFName=cons.TK_DBUS_ADMIN_INTERFACE,
+                )
             except Exception:
                 self._timekprAdminDbusInterface = None
                 # logging
-                log.consoleOut("FAILED to connect to timekpr user admin interface.\nPlease check that timekpr daemon is working and you have sufficient permissions to access it (either superuser or timekpr group)")
+                log.consoleOut(
+                    "FAILED to connect to timekpr user admin interface.\nPlease check that timekpr daemon is working and you have sufficient permissions to access it (either superuser or timekpr group)"
+                )
 
         # if either of this fails, we keep trying to connect
-        if self._timekprUserAdminDbusInterface is None or self._timekprAdminDbusInterface is None:
+        if (
+            self._timekprUserAdminDbusInterface is None
+            or self._timekprAdminDbusInterface is None
+        ):
             if self._retryCountLeft > 0 and not pTryOnce:
-                log.consoleOut("connection failed, %i attempts left, will retry in %i seconds" % (self._retryCountLeft, self._retryTimeoutSecs))
+                log.consoleOut(
+                    "connection failed, %i attempts left, will retry in %i seconds"
+                    % (self._retryCountLeft, self._retryTimeoutSecs)
+                )
                 self._retryCountLeft -= 1
 
                 # if either of this fails, we keep trying to connect
@@ -105,7 +140,13 @@ class timekprAdminConnector(object):
     def isConnected(self):
         """Return status of connection to DBUS"""
         # if either of this fails, we keep trying to connect
-        return not (self._timekprUserAdminDbusInterface is None or self._timekprAdminDbusInterface is None), not self._initFailed
+        return (
+            not (
+                self._timekprUserAdminDbusInterface is None
+                or self._timekprAdminDbusInterface is None
+            ),
+            not self._initFailed,
+        )
 
     def formatException(self, pExceptionStr, pFPath, pFName):
         """Format exception and pass it back"""
@@ -115,15 +156,28 @@ class timekprAdminConnector(object):
             message = msg.getTranslation("TK_MSG_DBUS_COMMUNICATION_COMMAND_FAILED")
         else:
             result = -1
-            message = msg.getTranslation("TK_MSG_UNEXPECTED_ERROR") % (("\"%s\" in \"%s.%s\"") % (pExceptionStr, pFPath, pFName))
+            message = msg.getTranslation("TK_MSG_UNEXPECTED_ERROR") % (
+                ('"%s" in "%s.%s"') % (pExceptionStr, pFPath, pFName)
+            )
         # log error
-        log.log(cons.TK_LOG_LEVEL_INFO, "ERROR: \"%s\" in \"%s.%s\"" % (pExceptionStr, pFPath, pFName))
+        log.log(
+            cons.TK_LOG_LEVEL_INFO,
+            'ERROR: "%s" in "%s.%s"' % (pExceptionStr, pFPath, pFName),
+        )
         # result
         return result, message
 
     def initReturnCodes(self, pInit, pCall):
         """Initialize the return codes for calls"""
-        return -2 if pInit else -1 if pCall else 0, msg.getTranslation("TK_MSG_STATUS_INTERFACE_NOTREADY") if pInit else msg.getTranslation("TK_MSG_DBUS_COMMUNICATION_COMMAND_NOT_ACCEPTED") if pCall else ""
+        return -2 if pInit else -1 if pCall else 0, (
+            msg.getTranslation("TK_MSG_STATUS_INTERFACE_NOTREADY")
+            if pInit
+            else (
+                msg.getTranslation("TK_MSG_DBUS_COMMUNICATION_COMMAND_NOT_ACCEPTED")
+                if pCall
+                else ""
+            )
+        )
 
     # --------------- user configuration info population methods --------------- #
 
@@ -141,10 +195,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message, userList = self._timekprUserAdminDbusInterface.getUserList()
+                result, message, userList = (
+                    self._timekprUserAdminDbusInterface.getUserList()
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.getUserList.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.getUserList.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -166,10 +224,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message, userConfig = self._timekprUserAdminDbusInterface.getUserInformation(pUserName, pInfoLvl)
+                result, message, userConfig = (
+                    self._timekprUserAdminDbusInterface.getUserInformation(
+                        pUserName, pInfoLvl
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.getUserConfigurationAndInformation.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.getUserConfigurationAndInformation.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -192,10 +256,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setAllowedDays(pUserName, pDayList)
+                result, message = self._timekprUserAdminDbusInterface.setAllowedDays(
+                    pUserName, pDayList
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setAllowedDays.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setAllowedDays.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -216,10 +284,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setAllowedHours(pUserName, pDayNumber, pHourList)
+                result, message = self._timekprUserAdminDbusInterface.setAllowedHours(
+                    pUserName, pDayNumber, pHourList
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setAllowedHours.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setAllowedHours.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -240,10 +312,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setTimeLimitForDays(pUserName, pDayLimits)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setTimeLimitForDays(
+                        pUserName, pDayLimits
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimeLimitForDays.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimeLimitForDays.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -264,10 +342,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setTimeLimitForWeek(pUserName, pTimeLimitWeek)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setTimeLimitForWeek(
+                        pUserName, pTimeLimitWeek
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimeLimitForWeek.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimeLimitForWeek.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -288,10 +372,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setTimeLimitForMonth(pUserName, pTimeLimitMonth)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setTimeLimitForMonth(
+                        pUserName, pTimeLimitMonth
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimeLimitForMonth.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimeLimitForMonth.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -312,10 +402,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setTrackInactive(pUserName, pTrackInactive)
+                result, message = self._timekprUserAdminDbusInterface.setTrackInactive(
+                    pUserName, pTrackInactive
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.getUserList.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.getUserList.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -336,10 +430,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setHideTrayIcon(pUserName, pHideTrayIcon)
+                result, message = self._timekprUserAdminDbusInterface.setHideTrayIcon(
+                    pUserName, pHideTrayIcon
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setHideTrayIcon.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setHideTrayIcon.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -360,10 +458,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setLockoutType(pUserName, pLockoutType, pWakeFrom, pWakeTo)
+                result, message = self._timekprUserAdminDbusInterface.setLockoutType(
+                    pUserName, pLockoutType, pWakeFrom, pWakeTo
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setLockoutType.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setLockoutType.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -384,10 +486,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setTimeLeft(pUserName, pOperation, pTimeLeft)
+                result, message = self._timekprUserAdminDbusInterface.setTimeLeft(
+                    pUserName, pOperation, pTimeLeft
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimeLeft.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimeLeft.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -410,10 +516,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeEnabled(pUserName, pPlayTimeEnabled)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setPlayTimeEnabled(
+                        pUserName, pPlayTimeEnabled
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeEnabled.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setPlayTimeEnabled.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -434,10 +546,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeLimitOverride(pUserName, pPlayTimeLimitOverride)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setPlayTimeLimitOverride(
+                        pUserName, pPlayTimeLimitOverride
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeLimitOverride.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setPlayTimeLimitOverride.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -445,7 +563,9 @@ class timekprAdminConnector(object):
         # result
         return result, message
 
-    def setPlayTimeUnaccountedIntervalsEnabled(self, pUserName, pPlayTimeUnaccountedIntervalsEnabled):
+    def setPlayTimeUnaccountedIntervalsEnabled(
+        self, pUserName, pPlayTimeUnaccountedIntervalsEnabled
+    ):
         """Set PlayTime allowed during unaccounted intervals flag for user"""
         # initial values
         result, message = self.initReturnCodes(pInit=True, pCall=False)
@@ -458,10 +578,18 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeUnaccountedIntervalsEnabled(pUserName, pPlayTimeUnaccountedIntervalsEnabled)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setPlayTimeUnaccountedIntervalsEnabled(
+                        pUserName, pPlayTimeUnaccountedIntervalsEnabled
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeUnaccountedIntervalsEnabled.__name__)
+                result, message = self.formatException(
+                    str(ex),
+                    __name__,
+                    self.setPlayTimeUnaccountedIntervalsEnabled.__name__,
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -482,10 +610,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeAllowedDays(pUserName, pPlayTimeAllowedDays)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setPlayTimeAllowedDays(
+                        pUserName, pPlayTimeAllowedDays
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeAllowedDays.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setPlayTimeAllowedDays.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -506,10 +640,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeLimitsForDays(pUserName, pPlayTimeLimits)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setPlayTimeLimitsForDays(
+                        pUserName, pPlayTimeLimits
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeLimitsForDays.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setPlayTimeLimitsForDays.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -530,10 +670,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeActivities(pUserName, pPlayTimeActivities)
+                result, message = (
+                    self._timekprUserAdminDbusInterface.setPlayTimeActivities(
+                        pUserName, pPlayTimeActivities
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeActivities.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setPlayTimeActivities.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -554,10 +700,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprUserAdminDbusInterface.setPlayTimeLeft(pUserName, pOperation, pTimeLeft)
+                result, message = self._timekprUserAdminDbusInterface.setPlayTimeLeft(
+                    pUserName, pOperation, pTimeLeft
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setPlayTimeLeft.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setPlayTimeLeft.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -581,10 +731,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message, timekprConfig = self._timekprAdminDbusInterface.getTimekprConfiguration()
+                result, message, timekprConfig = (
+                    self._timekprAdminDbusInterface.getTimekprConfiguration()
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.getTimekprConfiguration.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.getTimekprConfiguration.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -605,10 +759,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprLogLevel(pLogLevel)
+                result, message = self._timekprAdminDbusInterface.setTimekprLogLevel(
+                    pLogLevel
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprLogLevel.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprLogLevel.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -629,10 +787,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprPollTime(pPollTimeSecs)
+                result, message = self._timekprAdminDbusInterface.setTimekprPollTime(
+                    pPollTimeSecs
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprPollTime.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprPollTime.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -653,10 +815,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprSaveTime(pSaveTimeSecs)
+                result, message = self._timekprAdminDbusInterface.setTimekprSaveTime(
+                    pSaveTimeSecs
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprSaveTime.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprSaveTime.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -677,10 +843,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprTrackInactive(pTrackInactive)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprTrackInactive(
+                        pTrackInactive
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprTrackInactive.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprTrackInactive.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -701,10 +873,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprTerminationTime(pTerminationTimeSecs)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprTerminationTime(
+                        pTerminationTimeSecs
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprTerminationTime.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprTerminationTime.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -725,10 +903,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprFinalWarningTime(pFinalWarningTimeSecs)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprFinalWarningTime(
+                        pFinalWarningTimeSecs
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprFinalWarningTime.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprFinalWarningTime.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -749,10 +933,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprFinalNotificationTime(pFinalNotificationTimeSecs)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprFinalNotificationTime(
+                        pFinalNotificationTimeSecs
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprFinalNotificationTime.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprFinalNotificationTime.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -773,10 +963,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprSessionsCtrl(pSessionsCtrl)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprSessionsCtrl(
+                        pSessionsCtrl
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprSessionsCtrl.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprSessionsCtrl.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -797,10 +993,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprSessionsExcl(pSessionsExcl)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprSessionsExcl(
+                        pSessionsExcl
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprSessionsExcl.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprSessionsExcl.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -821,10 +1023,14 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprUsersExcl(pUsersExcl)
+                result, message = self._timekprAdminDbusInterface.setTimekprUsersExcl(
+                    pUsersExcl
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprUsersExcl.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprUsersExcl.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -845,10 +1051,16 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprPlayTimeEnabled(pPlayTimeEnabled)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprPlayTimeEnabled(
+                        pPlayTimeEnabled
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprPlayTimeEnabled.__name__)
+                result, message = self.formatException(
+                    str(ex), __name__, self.setTimekprPlayTimeEnabled.__name__
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)
@@ -869,10 +1081,18 @@ class timekprAdminConnector(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._timekprAdminDbusInterface.setTimekprPlayTimeEnhancedActivityMonitorEnabled(pPlayTimeEnabled)
+                result, message = (
+                    self._timekprAdminDbusInterface.setTimekprPlayTimeEnhancedActivityMonitorEnabled(
+                        pPlayTimeEnabled
+                    )
+                )
             except Exception as ex:
                 # exception
-                result, message = self.formatException(str(ex), __name__, self.setTimekprPlayTimeEnhancedActivityMonitorEnabled.__name__)
+                result, message = self.formatException(
+                    str(ex),
+                    __name__,
+                    self.setTimekprPlayTimeEnhancedActivityMonitorEnabled.__name__,
+                )
 
                 # we cannot send notif through dbus, we need to reschedule connecton
                 self.initTimekprConnection(False, True)

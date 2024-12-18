@@ -14,8 +14,10 @@ from datetime import datetime
 import os
 import pwd
 import inspect
+
 try:
     import psutil
+
     _PSUTIL = True
 except (ImportError, ValueError):
     _PSUTIL = False
@@ -80,7 +82,9 @@ def measureTimeElapsed(pStart=False, pStop=False, pResult=False):
     return _RESULT
 
 
-def measureDBUSTimeElapsed(pStart=False, pStop=False, pPrintToConsole=False, pDbusIFName=""):
+def measureDBUSTimeElapsed(
+    pStart=False, pStop=False, pPrintToConsole=False, pDbusIFName=""
+):
     """Calculate the time difference in the simplest manner"""
     # run
     result = measureTimeElapsed(pStart, pStop)
@@ -89,10 +93,17 @@ def measureDBUSTimeElapsed(pStart=False, pStop=False, pPrintToConsole=False, pDb
         # measurement logging
         if pPrintToConsole:
             # measurement logging
-            log.consoleOut("WARNING: PERFORMANCE (DBUS) - acquiring \"%s\" took too long (%is)" % (pDbusIFName, result))
+            log.consoleOut(
+                'WARNING: PERFORMANCE (DBUS) - acquiring "%s" took too long (%is)'
+                % (pDbusIFName, result)
+            )
         else:
             # measurement logging
-            log.log(cons.TK_LOG_LEVEL_INFO, "WARNING: PERFORMANCE (DBUS) - acquiring \"%s\" took too long (%is)" % (pDbusIFName, result))
+            log.log(
+                cons.TK_LOG_LEVEL_INFO,
+                'WARNING: PERFORMANCE (DBUS) - acquiring "%s" took too long (%is)'
+                % (pDbusIFName, result),
+            )
 
     # return
     return result
@@ -101,7 +112,14 @@ def measureDBUSTimeElapsed(pStart=False, pStop=False, pPrintToConsole=False, pDb
 def checkAndSetRunning(pAppName, pUserName=""):
     """Check whether application is already running"""
     # set up pidfile name
-    pidFile = os.path.join(cons.TK_LOG_TEMP_DIR, "%s.%s" % ((pAppName if pUserName == "" else "%s.%s" % (pAppName, pUserName)), cons.TK_LOG_PID_EXT))
+    pidFile = os.path.join(
+        cons.TK_LOG_TEMP_DIR,
+        "%s.%s"
+        % (
+            (pAppName if pUserName == "" else "%s.%s" % (pAppName, pUserName)),
+            cons.TK_LOG_PID_EXT,
+        ),
+    )
     processPid = "0"
     processCmd = ""
     isAlreadyRunning = False
@@ -131,7 +149,10 @@ def checkAndSetRunning(pAppName, pUserName=""):
         # we are running
         isAlreadyRunning = True
         # print this to console as well
-        print("Timekpr-nExT \"%s\" is already running for user \"%s\"" % (pAppName, pUserName if pUserName != "" else "ŗoot"))
+        print(
+            'Timekpr-nExT "%s" is already running for user "%s"'
+            % (pAppName, pUserName if pUserName != "" else "ŗoot")
+        )
     else:
         # set our pid
         with open(pidFile, "w") as pidfile:
@@ -157,7 +178,11 @@ def killLeftoverUserProcesses(pUserName, pTimekprConfig):
     otherProcesses = 0
 
     # build up killing session types
-    sessinTypesForKill = [rSessionType for rSessionType in pTimekprConfig.getTimekprSessionsCtrl() if rSessionType not in pTimekprConfig.getTimekprSessionsExcl()]
+    sessinTypesForKill = [
+        rSessionType
+        for rSessionType in pTimekprConfig.getTimekprSessionsCtrl()
+        if rSessionType not in pTimekprConfig.getTimekprSessionsExcl()
+    ]
 
     # check for graphical
     for sessionType in cons.TK_SESSION_TYPES_CTRL.split(";"):
@@ -175,15 +200,35 @@ def killLeftoverUserProcesses(pUserName, pTimekprConfig):
     # get all processes for this user
     for userProc in psutil.process_iter():
         # process info
-        procInfo = userProc.as_dict(attrs=["pid", "ppid", "name", "username", "terminal"])
+        procInfo = userProc.as_dict(
+            attrs=["pid", "ppid", "name", "username", "terminal"]
+        )
         # check for username and for processes that originates from init (the rest should be terminated along with the session)
         if procInfo["username"] == pUserName:
             # if originates from init
             if procInfo["ppid"] in (0, 1):
                 # normalize terminal (only real terminals are considered terminals)
-                terminal = procInfo["terminal"] if (procInfo["terminal"] is not None and "/dev/pts/" not in procInfo["terminal"]) else None
+                terminal = (
+                    procInfo["terminal"]
+                    if (
+                        procInfo["terminal"] is not None
+                        and "/dev/pts/" not in procInfo["terminal"]
+                    )
+                    else None
+                )
                 # logging
-                log.log(cons.TK_LOG_LEVEL_INFO, "INFO: got leftover process, pid: %s, ppid: %s, username: %s, name: %s, terminal: %s, effective terminal: %s" % (procInfo["pid"], procInfo["ppid"], procInfo["username"], procInfo["name"], procInfo["terminal"], terminal))
+                log.log(
+                    cons.TK_LOG_LEVEL_INFO,
+                    "INFO: got leftover process, pid: %s, ppid: %s, username: %s, name: %s, terminal: %s, effective terminal: %s"
+                    % (
+                        procInfo["pid"],
+                        procInfo["ppid"],
+                        procInfo["username"],
+                        procInfo["name"],
+                        procInfo["terminal"],
+                        terminal,
+                    ),
+                )
                 # kill processes if they are terminal and terminals are tracked or they are not terminal processes
                 if (terminal is not None and killTty) or (terminal is None and killGUI):
                     try:
@@ -191,24 +236,39 @@ def killLeftoverUserProcesses(pUserName, pTimekprConfig):
                         userPrc = psutil.Process(procInfo["pid"])
                         # killing time
                         if cons.TK_DEV_ACTIVE:
-                            log.log(cons.TK_LOG_LEVEL_INFO, "DEVELOPMENT ACTIVE, not killing my own processes, sorry...")
+                            log.log(
+                                cons.TK_LOG_LEVEL_INFO,
+                                "DEVELOPMENT ACTIVE, not killing my own processes, sorry...",
+                            )
                         else:
                             # asking process to terminate
                             userPrc.terminate()
                     except psutil.Error as psErr:
-                        log.log(cons.TK_LOG_LEVEL_INFO, "ERROR: killing %s failed (%s)" % (procInfo["pid"], str(psErr)))
+                        log.log(
+                            cons.TK_LOG_LEVEL_INFO,
+                            "ERROR: killing %s failed (%s)"
+                            % (procInfo["pid"], str(psErr)),
+                        )
                         pass
                     else:
                         # count killed processes
                         killedProcesses += 1
                 else:
                     # do not kill terminal sessions if ones are not tracked
-                    log.log(cons.TK_LOG_LEVEL_INFO, "INFO: NOT killing process %s as it's from sessions which are not being tracked" % (procInfo["pid"]))
+                    log.log(
+                        cons.TK_LOG_LEVEL_INFO,
+                        "INFO: NOT killing process %s as it's from sessions which are not being tracked"
+                        % (procInfo["pid"]),
+                    )
             else:
                 # count other processes
                 otherProcesses += 1
     # log
-    log.log(cons.TK_LOG_LEVEL_INFO, "INFO: %i session related processes were killed, %i other processes for user were not killed" % (killedProcesses, otherProcesses))
+    log.log(
+        cons.TK_LOG_LEVEL_INFO,
+        "INFO: %i session related processes were killed, %i other processes for user were not killed"
+        % (killedProcesses, otherProcesses),
+    )
 
 
 def findHourStartEndMinutes(pStr):
@@ -252,13 +312,13 @@ def findHourStartEndMinutes(pStr):
                 try:
                     # determine hour and minutes (and check for errors as well)
                     hour = int(pStr[beg:st])
-                    sMin = int(pStr[st+1:sep])
-                    eMin = int(pStr[sep+1:en])
+                    sMin = int(pStr[st + 1 : sep])
+                    eMin = int(pStr[sep + 1 : en])
                     # checks for errors (and raise one if there is an error)
-                    hour = hour if 0 <= hour <= 23 else 1/0
-                    sMin = sMin if 0 <= sMin <= 60 else 1/0
-                    eMin = eMin if 0 <= eMin <= 60 else 1/0
-                    eMin = eMin if sMin < eMin else 1/0
+                    hour = hour if 0 <= hour <= 23 else 1 / 0
+                    sMin = sMin if 0 <= sMin <= 60 else 1 / 0
+                    eMin = eMin if 0 <= eMin <= 60 else 1 / 0
+                    eMin = eMin if sMin < eMin else 1 / 0
                 except (ValueError, ZeroDivisionError):
                     # hour, start, end
                     hour = None
@@ -283,16 +343,18 @@ def splitConfigValueNameParam(pStr):
     else:
         try:
             # find description ("") is for backwards compatibility
-            st = pStr.find("(\"")  # compatibility description start
-            en = pStr.find("\")")  # compatibility description end
-            ln = 1 if st < 0 else 2  # compatility case searches for 2 letters, new one 1
+            st = pStr.find('("')  # compatibility description start
+            en = pStr.find('")')  # compatibility description end
+            ln = (
+                1 if st < 0 else 2
+            )  # compatility case searches for 2 letters, new one 1
             # new style config
             st = pStr.find("[") if st < 0 else st  # new style config
             en = pStr.find("]") if en < 0 else en  # new style config
             st = en if st < 0 else st  # no description, we'll get just pattern
             # process and its description
-            value = pStr[0:st if st > 0 else len(pStr)]
-            param = "" if st < 0 else pStr[st+ln:en if en >= 0 else len(pStr)]
+            value = pStr[0 : st if st > 0 else len(pStr)]
+            param = "" if st < 0 else pStr[st + ln : en if en >= 0 else len(pStr)]
         except:
             # it doesn't matter which error occurs
             value = None
