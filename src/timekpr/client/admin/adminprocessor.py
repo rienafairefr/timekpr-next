@@ -63,24 +63,18 @@ class timekprAdminClient(object):
             # if we are required to run graphical thing
             if timekprX11Available or timekprWaylandAvailable or timekprMirAvailable:
                 # resource dir
-                _resourcePathGUI = os.path.join(
-                    _timekprConfig.getTimekprSharedDir(), "client/forms"
-                )
+                _resourcePathGUI = os.path.join(_timekprConfig.getTimekprSharedDir(), "client/forms")
                 # use GUI
                 from timekpr.client.gui.admingui import timekprAdminGUI
 
                 # load GUI and process from there
-                self._adminGUI = timekprAdminGUI(
-                    cons.TK_VERSION, _resourcePathGUI, getpass.getuser()
-                )
+                self._adminGUI = timekprAdminGUI(cons.TK_VERSION, _resourcePathGUI, getpass.getuser())
                 # start GUI
                 self._adminGUI.startAdminGUI()
             # nor X nor wayland are available
             else:
                 # print to console
-                log.consoleOut(
-                    "%s\n" % (msg.getTranslation("TK_MSG_CONSOLE_GUI_NOT_AVAILABLE"))
-                )
+                log.consoleOut("%s\n" % (msg.getTranslation("TK_MSG_CONSOLE_GUI_NOT_AVAILABLE")))
                 # forced CLI"
                 timekprForceCLI = True
         else:
@@ -157,10 +151,8 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # get user config
-                result, message, userConfig = (
-                    self._timekprAdminConnector.getUserConfigurationAndInformation(
-                        args[paramIdx + 1], cons.TK_CL_INF_FULL
-                    )
+                result, message, userConfig = self._timekprAdminConnector.getUserConfigurationAndInformation(
+                    args[paramIdx + 1], cons.TK_CL_INF_FULL
                 )
 
                 # process
@@ -178,10 +170,8 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # get user config
-                result, message, userConfig = (
-                    self._timekprAdminConnector.getUserConfigurationAndInformation(
-                        args[paramIdx + 1], cons.TK_CL_INF_RT
-                    )
+                result, message, userConfig = self._timekprAdminConnector.getUserConfigurationAndInformation(
+                    args[paramIdx + 1], cons.TK_CL_INF_RT
                 )
 
                 # process
@@ -208,9 +198,7 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetAllowedHours(
-                    args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3]
-                )
+                self.processSetAllowedHours(args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3])
         # this sets time limits per allowed days
         elif adminCmd == "--settimelimits":
             # check param len
@@ -282,9 +270,7 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetPlayTimeLimitOverride(
-                    args[paramIdx + 1], args[paramIdx + 2]
-                )
+                self.processSetPlayTimeLimitOverride(args[paramIdx + 1], args[paramIdx + 2])
         # this sets playtime allowed during unaccounted intervals for user
         elif adminCmd == "--setplaytimeunaccountedintervalsflag":
             # check param len
@@ -293,9 +279,7 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetPlayTimeUnaccountedIntervalsEnabled(
-                    args[paramIdx + 1], args[paramIdx + 2]
-                )
+                self.processSetPlayTimeUnaccountedIntervalsEnabled(args[paramIdx + 1], args[paramIdx + 2])
         # this sets allowed days for PlayTime for the user
         elif adminCmd == "--setplaytimealloweddays":
             # check param len
@@ -304,9 +288,7 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetPlayTimeAllowedDays(
-                    args[paramIdx + 1], args[paramIdx + 2]
-                )
+                self.processSetPlayTimeAllowedDays(args[paramIdx + 1], args[paramIdx + 2])
         # this sets PlayTime limits for allowed days for the user
         elif adminCmd == "--setplaytimelimits":
             # check param len
@@ -324,9 +306,7 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetPlayTimeActivities(
-                    args[paramIdx + 1], args[paramIdx + 2]
-                )
+                self.processSetPlayTimeActivities(args[paramIdx + 1], args[paramIdx + 2])
         # this sets time left for the user at current moment
         elif adminCmd == "--settimeleft":
             # check param len
@@ -335,9 +315,7 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetTimeLeft(
-                    args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3]
-                )
+                self.processSetTimeLeft(args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3])
         # this sets time left for the user at current moment
         elif adminCmd == "--setplaytimeleft":
             # check param len
@@ -346,27 +324,20 @@ class timekprAdminClient(object):
                 adminCmdIncorrect = True
             else:
                 # set days
-                self.processSetPlayTimeLeft(
-                    args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3]
-                )
+                self.processSetPlayTimeLeft(args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3])
         else:
             # out
             adminCmdIncorrect = True
 
         # check whether command is supported
         if (
-            (
-                adminCmd not in cons.TK_USER_ADMIN_COMMANDS
-                and adminCmd not in cons.TK_ADMIN_COMMANDS
-            )
+            (adminCmd not in cons.TK_USER_ADMIN_COMMANDS and adminCmd not in cons.TK_ADMIN_COMMANDS)
             or adminCmd == "--help"
             or adminCmdIncorrect
         ):
             # fail
             if adminCmdIncorrect:
-                log.consoleOut(
-                    msg.getTranslation("TK_MSG_CONSOLE_COMMAND_INCORRECT"), *args, "\n"
-                )
+                log.consoleOut(msg.getTranslation("TK_MSG_CONSOLE_COMMAND_INCORRECT"), *args, "\n")
 
             # log notice
             log.consoleOut(
@@ -405,9 +376,7 @@ class timekprAdminClient(object):
     def printUserConfig(self, pUserName, pPrintUserConfig):
         """Format and print user config"""
         # print to console
-        log.consoleOut(
-            "# %s" % (msg.getTranslation("TK_MSG_CONSOLE_CONFIG_FOR") % (pUserName))
-        )
+        log.consoleOut("# %s" % (msg.getTranslation("TK_MSG_CONSOLE_CONFIG_FOR") % (pUserName)))
         # loop and print the same format as ppl will use to set that
         for rUserKey, rUserConfig in pPrintUserConfig.items():
             # join the lists
@@ -418,9 +387,7 @@ class timekprAdminClient(object):
                 "PLAYTIME_LIMITS_PER_WEEKDAYS",
             ):
                 # print join
-                log.consoleOut(
-                    "%s: %s" % (rUserKey, ";".join(list(map(str, rUserConfig))))
-                )
+                log.consoleOut("%s: %s" % (rUserKey, ";".join(list(map(str, rUserConfig)))))
             # join the lists
             elif "ALLOWED_HOURS_" in rUserKey:
                 # hrs
@@ -430,11 +397,7 @@ class timekprAdminClient(object):
                     # process hours
                     for rUserHour in sorted(list(map(int, rUserConfig))):
                         # unaccounted hour
-                        uacc = (
-                            "!"
-                            if rUserConfig[str(rUserHour)][cons.TK_CTRL_UACC]
-                            else ""
-                        )
+                        uacc = "!" if rUserConfig[str(rUserHour)][cons.TK_CTRL_UACC] else ""
                         # get config per hr
                         hr = (
                             "%s" % (rUserHour)
@@ -448,11 +411,7 @@ class timekprAdminClient(object):
                             )
                         )
                         # empty
-                        hrs = (
-                            "%s%s" % (uacc, hr)
-                            if hrs == ""
-                            else "%s;%s%s" % (hrs, uacc, hr)
-                        )
+                        hrs = "%s%s" % (uacc, hr) if hrs == "" else "%s;%s%s" % (hrs, uacc, hr)
                 log.consoleOut("%s: %s" % (rUserKey, hrs))
             elif rUserKey in (
                 "TRACK_INACTIVE",
@@ -468,11 +427,7 @@ class timekprAdminClient(object):
                 # loop thorhough activities
                 for rActArr in rUserConfig:
                     # activity
-                    act = (
-                        "%s[%s]" % (rActArr[0], rActArr[1])
-                        if rActArr[1] != ""
-                        else "%s" % (rActArr[0])
-                    )
+                    act = "%s[%s]" % (rActArr[0], rActArr[1]) if rActArr[1] != "" else "%s" % (rActArr[0])
                     # gather activities
                     result = "%s" % (act) if result == "" else "%s;%s" % (result, act)
                 log.consoleOut("%s: %s" % (rUserKey, result))
@@ -497,9 +452,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setAllowedDays(
-                pUserName, dayMap
-            )
+            result, message = self._timekprAdminConnector.setAllowedDays(pUserName, dayMap)
 
         # process
         if result != 0:
@@ -536,9 +489,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setAllowedHours(
-                pUserName, pDayNumber, allowedHours
-            )
+            result, message = self._timekprAdminConnector.setAllowedHours(pUserName, pDayNumber, allowedHours)
 
         # process
         if result != 0:
@@ -565,9 +516,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setTimeLimitForDays(
-                pUserName, dayLimits
-            )
+            result, message = self._timekprAdminConnector.setTimeLimitForDays(pUserName, dayLimits)
 
         # process
         if result != 0:
@@ -592,9 +541,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setTimeLimitForWeek(
-                pUserName, weekLimit
-            )
+            result, message = self._timekprAdminConnector.setTimeLimitForWeek(pUserName, weekLimit)
 
         # process
         if result != 0:
@@ -619,9 +566,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setTimeLimitForMonth(
-                pUserName, monthLimit
-            )
+            result, message = self._timekprAdminConnector.setTimeLimitForMonth(pUserName, monthLimit)
 
         # process
         if result != 0:
@@ -638,18 +583,14 @@ class timekprAdminClient(object):
         if str(pTrackInactive).lower() not in ("true", "false"):
             # fail
             result = -1
-            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % (
-                "please specify true or false"
-            )
+            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % ("please specify true or false")
         else:
             trackInactive = True if str(pTrackInactive).lower() == "true" else False
 
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setTrackInactive(
-                pUserName, trackInactive
-            )
+            result, message = self._timekprAdminConnector.setTrackInactive(pUserName, trackInactive)
 
         # process
         if result != 0:
@@ -666,18 +607,14 @@ class timekprAdminClient(object):
         if str(pHideTrayIcon).lower() not in ("true", "false"):
             # fail
             result = -1
-            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % (
-                "please specify true or false"
-            )
+            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % ("please specify true or false")
         else:
             hideTrayIcon = True if str(pHideTrayIcon).lower() == "true" else False
 
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setHideTrayIcon(
-                pUserName, hideTrayIcon
-            )
+            result, message = self._timekprAdminConnector.setHideTrayIcon(pUserName, hideTrayIcon)
 
         # process
         if result != 0:
@@ -745,9 +682,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setTimeLeft(
-                pUserName, pOperation, limit
-            )
+            result, message = self._timekprAdminConnector.setTimeLeft(pUserName, pOperation, limit)
 
         # process
         if result != 0:
@@ -766,20 +701,14 @@ class timekprAdminClient(object):
         if str(pPlayTimeEnabled).lower() not in ("true", "false"):
             # fail
             result = -1
-            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % (
-                "please specify true or false"
-            )
+            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % ("please specify true or false")
         else:
-            isPlayTimeEnabled = (
-                True if str(pPlayTimeEnabled).lower() == "true" else False
-            )
+            isPlayTimeEnabled = True if str(pPlayTimeEnabled).lower() == "true" else False
 
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setPlayTimeEnabled(
-                pUserName, isPlayTimeEnabled
-            )
+            result, message = self._timekprAdminConnector.setPlayTimeEnabled(pUserName, isPlayTimeEnabled)
 
         # process
         if result != 0:
@@ -796,29 +725,21 @@ class timekprAdminClient(object):
         if str(pPlayTimeLimitOverride).lower() not in ("true", "false"):
             # fail
             result = -1
-            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % (
-                "please specify true or false"
-            )
+            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % ("please specify true or false")
         else:
-            isPlayTimeLimitOverride = (
-                True if str(pPlayTimeLimitOverride).lower() == "true" else False
-            )
+            isPlayTimeLimitOverride = True if str(pPlayTimeLimitOverride).lower() == "true" else False
 
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setPlayTimeLimitOverride(
-                pUserName, isPlayTimeLimitOverride
-            )
+            result, message = self._timekprAdminConnector.setPlayTimeLimitOverride(pUserName, isPlayTimeLimitOverride)
 
         # process
         if result != 0:
             # log error
             log.consoleOut(message)
 
-    def processSetPlayTimeUnaccountedIntervalsEnabled(
-        self, pUserName, pPlayTimeUnaccountedIntervalsEnabled
-    ):
+    def processSetPlayTimeUnaccountedIntervalsEnabled(self, pUserName, pPlayTimeUnaccountedIntervalsEnabled):
         """Process PlayTime allowed during unaccounted intervals flag"""
         # defaults
         isPlayTimeUnaccountedIntervalsEnabled = None
@@ -828,23 +749,17 @@ class timekprAdminClient(object):
         if str(pPlayTimeUnaccountedIntervalsEnabled).lower() not in ("true", "false"):
             # fail
             result = -1
-            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % (
-                "please specify true or false"
-            )
+            message = msg.getTranslation("TK_MSG_PARSE_ERROR") % ("please specify true or false")
         else:
             isPlayTimeUnaccountedIntervalsEnabled = (
-                True
-                if str(pPlayTimeUnaccountedIntervalsEnabled).lower() == "true"
-                else False
+                True if str(pPlayTimeUnaccountedIntervalsEnabled).lower() == "true" else False
             )
 
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = (
-                self._timekprAdminConnector.setPlayTimeUnaccountedIntervalsEnabled(
-                    pUserName, isPlayTimeUnaccountedIntervalsEnabled
-                )
+            result, message = self._timekprAdminConnector.setPlayTimeUnaccountedIntervalsEnabled(
+                pUserName, isPlayTimeUnaccountedIntervalsEnabled
             )
 
         # process
@@ -870,9 +785,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setPlayTimeAllowedDays(
-                pUserName, dayMap
-            )
+            result, message = self._timekprAdminConnector.setPlayTimeAllowedDays(pUserName, dayMap)
 
         # process
         if result != 0:
@@ -899,9 +812,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setPlayTimeLimitsForDays(
-                pUserName, dayLimits
-            )
+            result, message = self._timekprAdminConnector.setPlayTimeLimitsForDays(pUserName, dayLimits)
 
         # process
         if result != 0:
@@ -936,9 +847,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setPlayTimeActivities(
-                pUserName, playTimeActivities
-            )
+            result, message = self._timekprAdminConnector.setPlayTimeActivities(pUserName, playTimeActivities)
 
         # process
         if result != 0:
@@ -963,9 +872,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setPlayTimeLeft(
-                pUserName, pOperation, limit
-            )
+            result, message = self._timekprAdminConnector.setPlayTimeLeft(pUserName, pOperation, limit)
 
         # process
         if result != 0:

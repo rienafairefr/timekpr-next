@@ -1,0 +1,34 @@
+name: Build Linux package
+
+permissions:
+  contents: write
+
+on:
+  workflow_run:
+    workflows: [ Python package ]
+    branches: ["*"]
+    types:
+      - completed
+
+jobs:
+  Create_Packages:
+    name: Create Package
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: "REPO"
+
+      - name: Build DEB Package
+        run: |
+          sudo apt-get update
+          sudo apt-get install debhelper dh-python po-debconf gir1.2-gtk-3.0 dpkg-dev build-essential
+          # Copy script files around to stop .github from being added to the package then build the package
+          mkdir PKG_SOURCE
+          cp -Rf REPO/bin REPO/src REPO/debian REPO/resource PKG_SOURCE
+          cd PKG_SOURCE
+          dpkg-buildpackage --unsigned-source --unsigned-changes --build=full
+
+      - name: Confirm builds complete
+        run: sudo install -m 644 -o runner -g runner $(find . -type f -name *.deb && find . -type f -name *.rpm) release/

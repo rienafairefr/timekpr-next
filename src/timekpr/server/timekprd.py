@@ -42,9 +42,7 @@ if __name__ == "__main__":
         # get out
         sys.exit(0)
 
-    log.log(
-        cons.TK_LOG_LEVEL_INFO, "--- initiating timekpr v. %s ---" % (cons.TK_VERSION)
-    )
+    log.log(cons.TK_LOG_LEVEL_INFO, "--- initiating timekpr v. %s ---" % (cons.TK_VERSION))
     # get uname
     uname = os.uname()
     log.log(

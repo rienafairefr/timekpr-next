@@ -1,0 +1,47 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+    - name: Set up cache
+      uses: actions/cache@v4
+      id: cached-poetry-dependencies
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install libglib2.0-dev libdbus-1-dev python3-dbus
+        poetry install --with=dev
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+    - name: Lint with black flake8
+      run: |
+        poetry run flake8
+        poetry run black .
+    - name: Test with pytest
+      run: |
+        poetry run pytest

@@ -35,17 +35,11 @@ class timekprClient(object):
     def __init__(self):
         """Initialize client"""
         # set username , etc.
-        self._userName, self._userNameFull = misc.getNormalizedUserNames(
-            pUID=os.getuid()
-        )
+        self._userName, self._userNameFull = misc.getNormalizedUserNames(pUID=os.getuid())
         self._userNameDBUS = self._userName.replace(".", "").replace("-", "")
 
         # get our bus
-        self._timekprBus = (
-            dbus.SessionBus()
-            if (cons.TK_DEV_ACTIVE and cons.TK_DEV_BUS == "ses")
-            else dbus.SystemBus()
-        )
+        self._timekprBus = dbus.SessionBus() if (cons.TK_DEV_ACTIVE and cons.TK_DEV_BUS == "ses") else dbus.SystemBus()
 
         # loop
         self._mainLoop = GLib.MainLoop()
@@ -144,9 +138,7 @@ class timekprClient(object):
         log.log(cons.TK_LOG_LEVEL_DEBUG, "start connectTimekprSignalsDBUS")
 
         # trying to connect
-        self._timekprClientIndicator.setStatus(
-            msg.getTranslation("TK_MSG_STATUS_CONNECTING")
-        )
+        self._timekprClientIndicator.setStatus(msg.getTranslation("TK_MSG_STATUS_CONNECTING"))
 
         try:
             # dbus performance measurement
@@ -159,13 +151,11 @@ class timekprClient(object):
             )
 
             # connect to signal
-            self._sessionAttributeVerificationSignal = (
-                self._timekprBus.add_signal_receiver(
-                    path=cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS,
-                    handler_function=self.receiveSessionAttributeVerificationRequest,
-                    dbus_interface=cons.TK_DBUS_USER_SESSION_ATTRIBUTE_INTERFACE,
-                    signal_name="sessionAttributeVerification",
-                )
+            self._sessionAttributeVerificationSignal = self._timekprBus.add_signal_receiver(
+                path=cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS,
+                handler_function=self.receiveSessionAttributeVerificationRequest,
+                dbus_interface=cons.TK_DBUS_USER_SESSION_ATTRIBUTE_INTERFACE,
+                signal_name="sessionAttributeVerification",
             )
 
             # connect to signal
@@ -209,32 +199,26 @@ class timekprClient(object):
             )
 
             # connect to signal
-            self._timeLeftChangedNotificationSignal = (
-                self._timekprBus.add_signal_receiver(
-                    path=cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS,
-                    handler_function=self.receiveTimeLeftChangedNotification,
-                    dbus_interface=cons.TK_DBUS_USER_NOTIF_INTERFACE,
-                    signal_name="timeLeftChangedNotification",
-                )
+            self._timeLeftChangedNotificationSignal = self._timekprBus.add_signal_receiver(
+                path=cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS,
+                handler_function=self.receiveTimeLeftChangedNotification,
+                dbus_interface=cons.TK_DBUS_USER_NOTIF_INTERFACE,
+                signal_name="timeLeftChangedNotification",
             )
 
             # connect to signal
-            self._timeConfigurationChangedNotificationSignal = (
-                self._timekprBus.add_signal_receiver(
-                    path=cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS,
-                    handler_function=self.receiveTimeConfigurationChangedNotification,
-                    dbus_interface=cons.TK_DBUS_USER_NOTIF_INTERFACE,
-                    signal_name="timeConfigurationChangedNotification",
-                )
+            self._timeConfigurationChangedNotificationSignal = self._timekprBus.add_signal_receiver(
+                path=cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS,
+                handler_function=self.receiveTimeConfigurationChangedNotification,
+                dbus_interface=cons.TK_DBUS_USER_NOTIF_INTERFACE,
+                signal_name="timeConfigurationChangedNotification",
             )
 
             # measurement logging
             misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_BUS_NAME)
 
             # set status
-            self._timekprClientIndicator.setStatus(
-                msg.getTranslation("TK_MSG_STATUS_CONNECTED")
-            )
+            self._timekprClientIndicator.setStatus(msg.getTranslation("TK_MSG_STATUS_CONNECTED"))
 
             log.log(cons.TK_LOG_LEVEL_DEBUG, "main DBUS signals connected")
 
@@ -242,8 +226,7 @@ class timekprClient(object):
             # logging
             log.log(
                 cons.TK_LOG_LEVEL_INFO,
-                'ERROR (DBUS): "%s" in "%s.%s"'
-                % (str(dbusEx), __name__, self.connectTimekprSignalsDBUS.__name__),
+                'ERROR (DBUS): "%s" in "%s.%s"' % (str(dbusEx), __name__, self.connectTimekprSignalsDBUS.__name__),
             )
             log.log(
                 cons.TK_LOG_LEVEL_INFO,
@@ -288,11 +271,7 @@ class timekprClient(object):
     def receiveTimeLeft(self, pPriority, pTimeInformation):
         """Receive the signal and process the data to user"""
         # check which options are available
-        timeLeft = (
-            pTimeInformation[cons.TK_CTRL_LEFT]
-            if cons.TK_CTRL_LEFT in pTimeInformation
-            else 0
-        )
+        timeLeft = pTimeInformation[cons.TK_CTRL_LEFT] if cons.TK_CTRL_LEFT in pTimeInformation else 0
         playTimeLeft = (
             pTimeInformation[cons.TK_CTRL_PTLPD]
             if cons.TK_CTRL_PTLSTC in pTimeInformation
@@ -300,11 +279,7 @@ class timekprClient(object):
             and cons.TK_CTRL_PTTLO in pTimeInformation
             else None
         )
-        isTimeNotLimited = (
-            pTimeInformation[cons.TK_CTRL_TNL]
-            if cons.TK_CTRL_TNL in pTimeInformation
-            else 0
-        )
+        isTimeNotLimited = pTimeInformation[cons.TK_CTRL_TNL] if cons.TK_CTRL_TNL in pTimeInformation else 0
         log.log(
             cons.TK_LOG_LEVEL_DEBUG,
             "receive timeleft, prio: %s, tl: %i, ptl: %s, nolim: %i"
@@ -317,11 +292,7 @@ class timekprClient(object):
             pPriority,
             cons.TK_DATETIME_START + timedelta(seconds=timeLeft),
             isTimeNotLimited,
-            (
-                cons.TK_DATETIME_START + timedelta(seconds=playTimeLeft)
-                if playTimeLeft is not None
-                else playTimeLeft
-            ),
+            (cons.TK_DATETIME_START + timedelta(seconds=playTimeLeft) if playTimeLeft is not None else playTimeLeft),
         )
         # renew limits in GUI
         self._timekprClientIndicator.renewUserLimits(pTimeInformation)
@@ -336,9 +307,7 @@ class timekprClient(object):
 
     # --------------- notification methods (from dbus) --------------- #
 
-    def receiveTimeLeftNotification(
-        self, pPriority, pTimeLeftTotal, pTimeLeftToday, pTimeLimitToday
-    ):
+    def receiveTimeLeftNotification(self, pPriority, pTimeLeftTotal, pTimeLeftToday, pTimeLimitToday):
         """Receive time left and update GUI"""
         log.log(
             cons.TK_LOG_LEVEL_DEBUG,
@@ -357,9 +326,7 @@ class timekprClient(object):
                 cons.TK_DATETIME_START + timedelta(seconds=pTimeLeftTotal),
             )
 
-    def receiveTimeCriticalNotification(
-        self, pFinalNotificationType, pPriority, pSecondsLeft
-    ):
+    def receiveTimeCriticalNotification(self, pFinalNotificationType, pPriority, pSecondsLeft):
         """Receive critical time left and show that to user"""
         log.log(
             cons.TK_LOG_LEVEL_DEBUG,
@@ -382,9 +349,7 @@ class timekprClient(object):
             and self._timekprClientIndicator.getTrayIconEnabled()
         ):
             # process time left
-            self._timekprClientIndicator.notifyUser(
-                cons.TK_MSG_CODE_TIMEUNLIMITED, None, pPriority
-            )
+            self._timekprClientIndicator.notifyUser(cons.TK_MSG_CODE_TIMEUNLIMITED, None, pPriority)
 
     def receiveTimeLeftChangedNotification(self, pPriority):
         """Receive time left notification and show it to user"""
@@ -395,9 +360,7 @@ class timekprClient(object):
             and self._timekprClientIndicator.getTrayIconEnabled()
         ):
             # limits have changed and applied
-            self._timekprClientIndicator.notifyUser(
-                cons.TK_MSG_CODE_TIMELEFTCHANGED, None, pPriority
-            )
+            self._timekprClientIndicator.notifyUser(cons.TK_MSG_CODE_TIMELEFTCHANGED, None, pPriority)
 
     def receiveTimeConfigurationChangedNotification(self, pPriority):
         """Receive notification about config change and show it to user"""
@@ -408,6 +371,4 @@ class timekprClient(object):
             and self._timekprClientIndicator.getTrayIconEnabled()
         ):
             # configuration has changed, new limits may have been applied
-            self._timekprClientIndicator.notifyUser(
-                cons.TK_MSG_CODE_TIMECONFIGCHANGED, None, pPriority
-            )
+            self._timekprClientIndicator.notifyUser(cons.TK_MSG_CODE_TIMECONFIGCHANGED, None, pPriority)
