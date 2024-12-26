@@ -9,7 +9,7 @@ on:
 jobs:
   create-release:
     name: Create Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - name: Create release ${{ github.ref }} as a draft
@@ -21,7 +21,7 @@ jobs:
   publish-release:
     needs: [create-release]
     name: Build Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - name: Download a single artifact
@@ -38,7 +38,7 @@ jobs:
   edit-release:
     name: Edit Release
     needs: [publish-release]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - name: Download a single artifact
