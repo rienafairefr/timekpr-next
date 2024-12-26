@@ -15,17 +15,16 @@ import os
 import pwd
 import inspect
 
+# timekpr imports
+from timekpr.common.constants import constants as cons
+from timekpr.common.log import log
+
 try:
     import psutil
 
     _PSUTIL = True
 except (ImportError, ValueError):
     _PSUTIL = False
-    pass
-
-# timekpr imports
-from timekpr.common.constants import constants as cons
-from timekpr.common.log import log
 
 
 # this is needed for debugging purposes
@@ -82,9 +81,7 @@ def measureTimeElapsed(pStart=False, pStop=False, pResult=False):
     return _RESULT
 
 
-def measureDBUSTimeElapsed(
-    pStart=False, pStop=False, pPrintToConsole=False, pDbusIFName=""
-):
+def measureDBUSTimeElapsed(pStart=False, pStop=False, pPrintToConsole=False, pDbusIFName=""):
     """Calculate the time difference in the simplest manner"""
     # run
     result = measureTimeElapsed(pStart, pStop)
@@ -93,16 +90,12 @@ def measureDBUSTimeElapsed(
         # measurement logging
         if pPrintToConsole:
             # measurement logging
-            log.consoleOut(
-                'WARNING: PERFORMANCE (DBUS) - acquiring "%s" took too long (%is)'
-                % (pDbusIFName, result)
-            )
+            log.consoleOut('WARNING: PERFORMANCE (DBUS) - acquiring "%s" took too long (%is)' % (pDbusIFName, result))
         else:
             # measurement logging
             log.log(
                 cons.TK_LOG_LEVEL_INFO,
-                'WARNING: PERFORMANCE (DBUS) - acquiring "%s" took too long (%is)'
-                % (pDbusIFName, result),
+                'WARNING: PERFORMANCE (DBUS) - acquiring "%s" took too long (%is)' % (pDbusIFName, result),
             )
 
     # return
@@ -150,8 +143,7 @@ def checkAndSetRunning(pAppName, pUserName=""):
         isAlreadyRunning = True
         # print this to console as well
         print(
-            'Timekpr-nExT "%s" is already running for user "%s"'
-            % (pAppName, pUserName if pUserName != "" else "ŗoot")
+            'Timekpr-nExT "%s" is already running for user "%s"' % (pAppName, pUserName if pUserName != "" else "ŗoot")
         )
     else:
         # set our pid
@@ -200,9 +192,7 @@ def killLeftoverUserProcesses(pUserName, pTimekprConfig):
     # get all processes for this user
     for userProc in psutil.process_iter():
         # process info
-        procInfo = userProc.as_dict(
-            attrs=["pid", "ppid", "name", "username", "terminal"]
-        )
+        procInfo = userProc.as_dict(attrs=["pid", "ppid", "name", "username", "terminal"])
         # check for username and for processes that originates from init (the rest should be terminated along with the session)
         if procInfo["username"] == pUserName:
             # if originates from init
@@ -210,10 +200,7 @@ def killLeftoverUserProcesses(pUserName, pTimekprConfig):
                 # normalize terminal (only real terminals are considered terminals)
                 terminal = (
                     procInfo["terminal"]
-                    if (
-                        procInfo["terminal"] is not None
-                        and "/dev/pts/" not in procInfo["terminal"]
-                    )
+                    if (procInfo["terminal"] is not None and "/dev/pts/" not in procInfo["terminal"])
                     else None
                 )
                 # logging
@@ -246,8 +233,7 @@ def killLeftoverUserProcesses(pUserName, pTimekprConfig):
                     except psutil.Error as psErr:
                         log.log(
                             cons.TK_LOG_LEVEL_INFO,
-                            "ERROR: killing %s failed (%s)"
-                            % (procInfo["pid"], str(psErr)),
+                            "ERROR: killing %s failed (%s)" % (procInfo["pid"], str(psErr)),
                         )
                         pass
                     else:
@@ -345,9 +331,7 @@ def splitConfigValueNameParam(pStr):
             # find description ("") is for backwards compatibility
             st = pStr.find('("')  # compatibility description start
             en = pStr.find('")')  # compatibility description end
-            ln = (
-                1 if st < 0 else 2
-            )  # compatility case searches for 2 letters, new one 1
+            ln = 1 if st < 0 else 2  # compatility case searches for 2 letters, new one 1
             # new style config
             st = pStr.find("[") if st < 0 else st  # new style config
             en = pStr.find("]") if en < 0 else en  # new style config

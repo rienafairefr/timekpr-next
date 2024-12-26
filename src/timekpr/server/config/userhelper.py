@@ -6,7 +6,6 @@ Created on Feb 05, 2019
 
 # imports
 import fileinput
-import re
 import os
 import pwd
 import re
@@ -22,9 +21,7 @@ from timekpr.common.utils.misc import getNormalizedUserNames
 
 # user limits
 _limitsConfig = {}
-_loginManagers = [
-    result.strip(None) for result in cons.TK_USERS_LOGIN_MANAGERS.split(";")
-]
+_loginManagers = [result.strip(None) for result in cons.TK_USERS_LOGIN_MANAGERS.split(";")]
 
 # defaults
 _limitsConfig["UID_MIN"] = 1000
@@ -33,9 +30,7 @@ _limitsConfig["UID_MAX"] = 60000
 #   all users, max 101 chars
 #   linux users, extended with uppercase characters and first numeric or "." character
 #   domain users, extended with uppercase characters and first numeric or ".", and "@" symbol
-_userNameRegexp = re.compile(
-    "^[a-zA-Z0-9_\.]([a-zA-Z0-9_\.@-]{0,101}|[a-zA-Z0-9_\.@-]{0,100}\$)$"
-)
+_userNameRegexp = re.compile(r"^[a-zA-Z0-9_\\.]([a-zA-Z0-9_\\.@-]{0,101}|[a-zA-Z0-9_\\.@-]{0,100}\$)$")
 
 
 # some distros are "different", login.defs may be in different dir, config reflects multiple dirs to check for the file
@@ -153,13 +148,9 @@ class timekprUserStore(object):
                     'setting up user "%s" with id %i' % (rUser, users[rUser][0]),
                 )
                 # user config
-                timekprUserConfig(
-                    timekprConfigManager.getTimekprConfigDir(), rUser
-                ).initUserConfiguration()
+                timekprUserConfig(timekprConfigManager.getTimekprConfigDir(), rUser).initUserConfiguration()
                 # user control
-                timekprUserControl(
-                    timekprConfigManager.getTimekprWorkDir(), rUser
-                ).initUserControl()
+                timekprUserControl(timekprConfigManager.getTimekprWorkDir(), rUser).initUserControl()
 
         log.log(cons.TK_LOG_LEVEL_DEBUG, "finishing setting up users")
 
@@ -173,7 +164,9 @@ class timekprUserStore(object):
           leftover config - please set up non-existent user (maybe pre-defined one?)
         """
         # initialize username storage
-        filterExistingOnly = False  # this is to filter only existing local users (currently just here, not decided on what to do)
+        filterExistingOnly = (
+            False  # this is to filter only existing local users (currently just here, not decided on what to do)
+        )
         userList = []
 
         # prepare all users in the system
@@ -194,9 +187,7 @@ class timekprUserStore(object):
         log.log(cons.TK_LOG_LEVEL_DEBUG, "listing user config files")
 
         # now list the config files
-        userConfigFiles = glob(
-            os.path.join(configDir, cons.TK_USER_CONFIG_FILE % ("*"))
-        )
+        userConfigFiles = glob(os.path.join(configDir, cons.TK_USER_CONFIG_FILE % ("*")))
 
         log.log(cons.TK_LOG_LEVEL_DEBUG, "traversing user config files")
 

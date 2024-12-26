@@ -65,9 +65,7 @@ class timekprGUI(object):
             )
         )
         # get main form (to set various runtime things)
-        self._timekprAboutDialog = self._timekprAboutDialogBuilder.get_object(
-            "timekprAboutDialog"
-        )
+        self._timekprAboutDialog = self._timekprAboutDialogBuilder.get_object("timekprAboutDialog")
 
         # init config builder
         self._timekprConfigDialogBuilder = Gtk.Builder()
@@ -80,72 +78,52 @@ class timekprGUI(object):
             )
         )
         # get main form (to set various runtime things)
-        self._timekprConfigDialog = self._timekprConfigDialogBuilder.get_object(
-            "timekprConfigDialog"
-        )
+        self._timekprConfigDialog = self._timekprConfigDialogBuilder.get_object("timekprConfigDialog")
 
         self._timekprAboutDialogBuilder.connect_signals(self)
         self._timekprConfigDialogBuilder.connect_signals(self)
 
         # set up username (this does not change)
         self._timekprConfigDialogBuilder.get_object("timekprUsernameLB").set_text(
-            "%s (%s)" % (self._userName, pUserNameFull)
-            if pUserNameFull != ""
-            else self._userName
+            "%s (%s)" % (self._userName, pUserNameFull) if pUserNameFull != "" else self._userName
         )
 
         # this sets up columns for days config
         col = Gtk.TreeViewColumn("Day", Gtk.CellRendererText(), text=1)
         col.set_min_width(100)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprAllowedDaysDaysTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysTreeview").append_column(col)
         col = Gtk.TreeViewColumn("Limit", Gtk.CellRendererText(), text=2)
         col.set_min_width(60)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprAllowedDaysDaysTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysTreeview").append_column(col)
 
         # this sets up columns for interval list
         # interval string
         col = Gtk.TreeViewColumn("Interval", Gtk.CellRendererText(), text=0)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprAllowedDaysIntervalsTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsTreeview").append_column(col)
         # unaccountable interval column
         col = Gtk.TreeViewColumn("Unaccounted", Gtk.CellRendererText(), text=1)
         col.set_min_width(10)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprAllowedDaysIntervalsTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsTreeview").append_column(col)
 
         # PlayTime
         # this sets up columns for limits list
         col = Gtk.TreeViewColumn("Day", Gtk.CellRendererText(), text=1)
         col.set_min_width(100)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTAllowedDaysLimitsDaysTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsDaysTreeview").append_column(col)
         col = Gtk.TreeViewColumn("Limit", Gtk.CellRendererText(), text=2)
         col.set_min_width(60)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTAllowedDaysLimitsDaysTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsDaysTreeview").append_column(col)
         # this sets up columns for process list
         col = Gtk.TreeViewColumn("Day", Gtk.CellRendererText(), text=0)
         col.set_min_width(140)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTAllowedDaysLimitsApplsTreeview"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsApplsTreeview").append_column(col)
 
         # hide PT page by default
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprConfigNotebook"
-        ).get_nth_page(self._timekprPTPageNr).set_visible(False)
-        # hide PT config as well
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigPlayTimeGrid"
+        self._timekprConfigDialogBuilder.get_object("timekprConfigNotebook").get_nth_page(
+            self._timekprPTPageNr
         ).set_visible(False)
+        # hide PT config as well
+        self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigPlayTimeGrid").set_visible(False)
 
         # initial config (everything is to the max)
         for i in range(0, 7):
@@ -168,13 +146,9 @@ class timekprGUI(object):
             msg.getTranslation("TK_MSG_NOTIF_CONFIG_TIME_PHLD_LABEL"),
         )
         rend.connect("edited", self.userTimeEdited)
-        col = Gtk.TreeViewColumn(
-            msg.getTranslation("TK_MSG_NOTIF_CONFIG_TIME_LABEL"), rend, text=1
-        )
+        col = Gtk.TreeViewColumn(msg.getTranslation("TK_MSG_NOTIF_CONFIG_TIME_LABEL"), rend, text=1)
         col.set_min_width(90)
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigTreeView"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigTreeView").append_column(col)
 
         # importance
         rend = Gtk.CellRendererCombo()
@@ -185,24 +159,16 @@ class timekprGUI(object):
         )
         rend.set_property(
             "model",
-            self._timekprConfigDialogBuilder.get_object(
-                "TimekprNotificationPrioritiesLS"
-            ),
+            self._timekprConfigDialogBuilder.get_object("TimekprNotificationPrioritiesLS"),
         )
         rend.set_property("text-column", 1)
         rend.set_property("has-entry", False)
         rend.connect("edited", self.userPriorityEdited)
-        col = Gtk.TreeViewColumn(
-            msg.getTranslation("TK_MSG_NOTIF_CONFIG_IMPORTANCE_LABEL"), rend, text=3
-        )
+        col = Gtk.TreeViewColumn(msg.getTranslation("TK_MSG_NOTIF_CONFIG_IMPORTANCE_LABEL"), rend, text=3)
         col.set_min_width(120)
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigTreeView"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigTreeView").append_column(col)
         # clear
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigLS"
-        ).clear()
+        self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigLS").clear()
 
         # ## PlayTime notification configuration ##
         # Less than
@@ -213,13 +179,9 @@ class timekprGUI(object):
             msg.getTranslation("TK_MSG_NOTIF_CONFIG_TIME_PHLD_LABEL"),
         )
         rend.connect("edited", self.userPlayTimeEdited)
-        col = Gtk.TreeViewColumn(
-            msg.getTranslation("TK_MSG_NOTIF_CONFIG_TIME_LABEL"), rend, text=1
-        )
+        col = Gtk.TreeViewColumn(msg.getTranslation("TK_MSG_NOTIF_CONFIG_TIME_LABEL"), rend, text=1)
         col.set_min_width(90)
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserPlayTimeNotificationConfigTreeView"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("TimekprUserPlayTimeNotificationConfigTreeView").append_column(col)
 
         # importance
         rend = Gtk.CellRendererCombo()
@@ -230,24 +192,16 @@ class timekprGUI(object):
         )
         rend.set_property(
             "model",
-            self._timekprConfigDialogBuilder.get_object(
-                "TimekprNotificationPrioritiesLS"
-            ),
+            self._timekprConfigDialogBuilder.get_object("TimekprNotificationPrioritiesLS"),
         )
         rend.set_property("text-column", 1)
         rend.set_property("has-entry", False)
         rend.connect("edited", self.userPlayTimePriorityEdited)
-        col = Gtk.TreeViewColumn(
-            msg.getTranslation("TK_MSG_NOTIF_CONFIG_IMPORTANCE_LABEL"), rend, text=3
-        )
+        col = Gtk.TreeViewColumn(msg.getTranslation("TK_MSG_NOTIF_CONFIG_IMPORTANCE_LABEL"), rend, text=3)
         col.set_min_width(120)
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserPlayTimeNotificationConfigTreeView"
-        ).append_column(col)
+        self._timekprConfigDialogBuilder.get_object("TimekprUserPlayTimeNotificationConfigTreeView").append_column(col)
         # clear
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserPlayTimeNotificationConfigLS"
-        ).clear()
+        self._timekprConfigDialogBuilder.get_object("TimekprUserPlayTimeNotificationConfigLS").clear()
 
         # status
         self.setStatus(msg.getTranslation("TK_MSG_STATUS_STARTED"))
@@ -273,11 +227,7 @@ class timekprGUI(object):
     def setTimeValue(self, path, text, pConfType):
         """Verify and set time string values"""
         # element
-        prioLs = (
-            "TimekprUserNotificationConfigLS"
-            if pConfType == "Time"
-            else "TimekprUserPlayTimeNotificationConfigLS"
-        )
+        prioLs = "TimekprUserNotificationConfigLS" if pConfType == "Time" else "TimekprUserPlayTimeNotificationConfigLS"
         # store
         timelSt = self._timekprConfigDialogBuilder.get_object(prioLs)
         # value before
@@ -307,9 +257,7 @@ class timekprGUI(object):
                 # we can not allow duplicates
                 if not len(dupl) > 0:
                     # format secs
-                    textStr = self.formatTimeStr(
-                        cons.TK_DATETIME_START + timedelta(seconds=secs), "s"
-                    )
+                    textStr = self.formatTimeStr(cons.TK_DATETIME_START + timedelta(seconds=secs), "s")
                     # set values
                     timelSt[path][0] = secs
                     timelSt[path][1] = textStr
@@ -321,11 +269,7 @@ class timekprGUI(object):
     def setPriorityValue(self, path, text, pConfType):
         """Verify and set time string values"""
         # element
-        prioLs = (
-            "TimekprUserNotificationConfigLS"
-            if pConfType == "Time"
-            else "TimekprUserPlayTimeNotificationConfigLS"
-        )
+        prioLs = "TimekprUserNotificationConfigLS" if pConfType == "Time" else "TimekprUserPlayTimeNotificationConfigLS"
         # store
         priolSt = self._timekprConfigDialogBuilder.get_object(prioLs)
         # value before
@@ -335,9 +279,7 @@ class timekprGUI(object):
             # find selected value
             val = [
                 (rVal[0], rVal[1])
-                for rVal in self._timekprConfigDialogBuilder.get_object(
-                    "TimekprNotificationPrioritiesLS"
-                )
+                for rVal in self._timekprConfigDialogBuilder.get_object("TimekprNotificationPrioritiesLS")
                 if rVal[1] == text
             ]
             # set values
@@ -365,9 +307,7 @@ class timekprGUI(object):
     def addNotificationConf(self, pConfType):
         """Add notification interval to the list"""
         prioSt = self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigLS"
-            if pConfType == "Time"
-            else "TimekprUserPlayTimeNotificationConfigLS"
+            "TimekprUserNotificationConfigLS" if pConfType == "Time" else "TimekprUserPlayTimeNotificationConfigLS"
         )
         prioTw = self._timekprConfigDialogBuilder.get_object(
             "TimekprUserNotificationConfigTreeView"
@@ -393,9 +333,7 @@ class timekprGUI(object):
         """Remove notification interval"""
         # defaults
         prioSt = self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigLS"
-            if pConfType == "Time"
-            else "TimekprUserPlayTimeNotificationConfigLS"
+            "TimekprUserNotificationConfigLS" if pConfType == "Time" else "TimekprUserPlayTimeNotificationConfigLS"
         )
         # refresh the child
         (tm, ti) = (
@@ -426,9 +364,7 @@ class timekprGUI(object):
         """Sort notification config for ease of use"""
         # element
         prioSt = self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigLS"
-            if pConfType == "Time"
-            else "TimekprUserPlayTimeNotificationConfigLS"
+            "TimekprUserNotificationConfigLS" if pConfType == "Time" else "TimekprUserPlayTimeNotificationConfigLS"
         )
         # sort vairables
         prio = {}
@@ -465,9 +401,7 @@ class timekprGUI(object):
             days = (pTime - cons.TK_DATETIME_START).days
             # calculate hours and mins
             hrMin = "%s:%s" % (
-                ("24" if pFormatType != "f" and days >= 1 else str(pTime.hour)).rjust(
-                    2, "0"
-                ),
+                ("24" if pFormatType != "f" and days >= 1 else str(pTime.hour)).rjust(2, "0"),
                 str(pTime.minute).rjust(2, "0"),
             )
             # calculate secs
@@ -478,72 +412,58 @@ class timekprGUI(object):
                 timeStr = "%s:%s" % (hrMin, secs)
             # for full time (d:h:m:s)
             else:
-                timeStr = (
-                    "%s:%s:%s" % (str(days).rjust(2, "0"), hrMin, secs)
-                    if pFormatType != "s"
-                    else hrMin
-                )
+                timeStr = "%s:%s:%s" % (str(days).rjust(2, "0"), hrMin, secs) if pFormatType != "s" else hrMin
         # return
         return timeStr
 
     def renewUserConfiguration(self):
         """Update configuration options"""
         # if speech is not supported, we disable and uncheck the box
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprUseSpeechNotifCB"
-        ).set_sensitive(self._timekprClientConfig.getIsNotificationSpeechSupported())
+        self._timekprConfigDialogBuilder.get_object("timekprUseSpeechNotifCB").set_sensitive(
+            self._timekprClientConfig.getIsNotificationSpeechSupported()
+        )
         # if sound is not supported by libnotify implementation, we disable and uncheck the box
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprUseNotificationSoundCB"
-        ).set_sensitive(self._timekprClientConfig.getIsNotificationSoundSupported())
+        self._timekprConfigDialogBuilder.get_object("timekprUseNotificationSoundCB").set_sensitive(
+            self._timekprClientConfig.getIsNotificationSoundSupported()
+        )
 
         # user config
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitChangeNotifCB"
-        ).set_active(self._timekprClientConfig.getClientShowLimitNotifications())
+        self._timekprConfigDialogBuilder.get_object("timekprLimitChangeNotifCB").set_active(
+            self._timekprClientConfig.getClientShowLimitNotifications()
+        )
         self._timekprConfigDialogBuilder.get_object("timekprShowAllNotifCB").set_active(
             self._timekprClientConfig.getClientShowAllNotifications()
         )
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprUseSpeechNotifCB"
-        ).set_active(self._timekprClientConfig.getClientUseSpeechNotifications())
+        self._timekprConfigDialogBuilder.get_object("timekprUseSpeechNotifCB").set_active(
+            self._timekprClientConfig.getClientUseSpeechNotifications()
+        )
         self._timekprConfigDialogBuilder.get_object("timekprShowSecondsCB").set_active(
             self._timekprClientConfig.getClientShowSeconds()
         )
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprUseNotificationSoundCB"
-        ).set_active(self._timekprClientConfig.getClientUseNotificationSound())
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprNotificationTimeoutSB"
-        ).set_value(self._timekprClientConfig.getClientNotificationTimeout())
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprNotificationTimeoutCriticalSB"
-        ).set_value(self._timekprClientConfig.getClientNotificationTimeoutCritical())
+        self._timekprConfigDialogBuilder.get_object("timekprUseNotificationSoundCB").set_active(
+            self._timekprClientConfig.getClientUseNotificationSound()
+        )
+        self._timekprConfigDialogBuilder.get_object("timekprNotificationTimeoutSB").set_value(
+            self._timekprClientConfig.getClientNotificationTimeout()
+        )
+        self._timekprConfigDialogBuilder.get_object("timekprNotificationTimeoutCriticalSB").set_value(
+            self._timekprClientConfig.getClientNotificationTimeoutCritical()
+        )
         self._timekprConfigDialogBuilder.get_object("timekprLogLevelSB").set_value(
             self._timekprClientConfig.getClientLogLevel()
         )
         # priority config
-        prioConfSt = self._timekprConfigDialogBuilder.get_object(
-            "TimekprNotificationPrioritiesLS"
-        )
+        prioConfSt = self._timekprConfigDialogBuilder.get_object("TimekprNotificationPrioritiesLS")
         # load notification priorities
-        prioSt = self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigLS"
-        )
+        prioSt = self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigLS")
         prioSt.clear()
         for rPrio in self._timekprClientConfig.getClientNotificationLevels():
             # append intervals
-            val = [
-                (rVal[0], rVal[1])
-                for rVal in prioConfSt
-                if rVal[0] == cons.TK_PRIO_LVL_MAP[rPrio[1]]
-            ]
+            val = [(rVal[0], rVal[1]) for rVal in prioConfSt if rVal[0] == cons.TK_PRIO_LVL_MAP[rPrio[1]]]
             prioSt.append(
                 [
                     rPrio[0],
-                    self.formatTimeStr(
-                        cons.TK_DATETIME_START + timedelta(seconds=rPrio[0]), "s"
-                    ),
+                    self.formatTimeStr(cons.TK_DATETIME_START + timedelta(seconds=rPrio[0]), "s"),
                     val[0][0],
                     val[0][1],
                 ]
@@ -551,23 +471,15 @@ class timekprGUI(object):
         # sort configd
         self.sortNotificationConfig("Time")
         # load PlayTime notification priorities
-        prioSt = self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserPlayTimeNotificationConfigLS"
-        )
+        prioSt = self._timekprConfigDialogBuilder.get_object("TimekprUserPlayTimeNotificationConfigLS")
         prioSt.clear()
         for rPrio in self._timekprClientConfig.getClientPlayTimeNotificationLevels():
             # append intervals
-            val = [
-                (rVal[0], rVal[1])
-                for rVal in prioConfSt
-                if rVal[0] == cons.TK_PRIO_LVL_MAP[rPrio[1]]
-            ]
+            val = [(rVal[0], rVal[1]) for rVal in prioConfSt if rVal[0] == cons.TK_PRIO_LVL_MAP[rPrio[1]]]
             prioSt.append(
                 [
                     rPrio[0],
-                    self.formatTimeStr(
-                        cons.TK_DATETIME_START + timedelta(seconds=rPrio[0]), "s"
-                    ),
+                    self.formatTimeStr(cons.TK_DATETIME_START + timedelta(seconds=rPrio[0]), "s"),
                     val[0][0],
                     val[0][1],
                 ]
@@ -582,53 +494,31 @@ class timekprGUI(object):
         # sets time left
         if pTimeInformation is not None:
             # limits
-            self._timeSpent = cons.TK_DATETIME_START + timedelta(
-                seconds=pTimeInformation[cons.TK_CTRL_SPENT]
-            )
-            self._timeSpentWeek = cons.TK_DATETIME_START + timedelta(
-                seconds=pTimeInformation[cons.TK_CTRL_SPENTW]
-            )
-            self._timeSpentMonth = cons.TK_DATETIME_START + timedelta(
-                seconds=pTimeInformation[cons.TK_CTRL_SPENTM]
-            )
-            self._timeInactive = cons.TK_DATETIME_START + timedelta(
-                seconds=pTimeInformation[cons.TK_CTRL_SLEEP]
-            )
-            self._timeLeftToday = cons.TK_DATETIME_START + timedelta(
-                seconds=pTimeInformation[cons.TK_CTRL_LEFTD]
-            )
-            self._timeLeftContinous = cons.TK_DATETIME_START + timedelta(
-                seconds=pTimeInformation[cons.TK_CTRL_LEFT]
-            )
-            self._timeTrackInactive = (
-                True if pTimeInformation[cons.TK_CTRL_TRACK] else False
-            )
+            self._timeSpent = cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_SPENT])
+            self._timeSpentWeek = cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_SPENTW])
+            self._timeSpentMonth = cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_SPENTM])
+            self._timeInactive = cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_SLEEP])
+            self._timeLeftToday = cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_LEFTD])
+            self._timeLeftContinous = cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_LEFT])
+            self._timeTrackInactive = True if pTimeInformation[cons.TK_CTRL_TRACK] else False
             self._timeTimeLimitOverridePT = (
-                bool(pTimeInformation[cons.TK_CTRL_PTTLO])
-                if cons.TK_CTRL_PTTLO in pTimeInformation
-                else False
+                bool(pTimeInformation[cons.TK_CTRL_PTTLO]) if cons.TK_CTRL_PTTLO in pTimeInformation else False
             )
             self._timeUnaccountedIntervalsFlagPT = (
-                bool(pTimeInformation[cons.TK_CTRL_PTAUH])
-                if cons.TK_CTRL_PTAUH in pTimeInformation
-                else False
+                bool(pTimeInformation[cons.TK_CTRL_PTAUH]) if cons.TK_CTRL_PTAUH in pTimeInformation else False
             )
             self._timeSpentPT = (
-                cons.TK_DATETIME_START
-                + timedelta(seconds=pTimeInformation[cons.TK_CTRL_PTSPD])
+                cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_PTSPD])
                 if cons.TK_CTRL_PTSPD in pTimeInformation
                 else None
             )
             self._timeLeftPT = (
-                cons.TK_DATETIME_START
-                + timedelta(seconds=pTimeInformation[cons.TK_CTRL_PTLPD])
+                cons.TK_DATETIME_START + timedelta(seconds=pTimeInformation[cons.TK_CTRL_PTLPD])
                 if cons.TK_CTRL_PTLPD in pTimeInformation
                 else None
             )
             self._timePTActivityCntStr = str(
-                pTimeInformation[cons.TK_CTRL_PTLSTC]
-                if cons.TK_CTRL_PTLSTC in pTimeInformation
-                else 0
+                pTimeInformation[cons.TK_CTRL_PTLSTC] if cons.TK_CTRL_PTLSTC in pTimeInformation else 0
             )
 
         # calculate strings to show (and show only those, which have data)
@@ -641,51 +531,33 @@ class timekprGUI(object):
         timeSpentPTStr = self.formatTimeStr(self._timeSpentPT)
         timeLeftPTStr = (
             self.formatTimeStr(
-                self._timeLeftPT
-                if self._timeLeftPT is None
-                else min(self._timeLeftPT, self._timeLeftToday)
+                self._timeLeftPT if self._timeLeftPT is None else min(self._timeLeftPT, self._timeLeftToday)
             )
             if not self._timeTimeLimitOverridePT
             else _NO_TIME_LABEL
         )
 
         # sets up stuff
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoTimeSpeneLB"
-        ).set_text(timeSpentStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoTimeSpentWeeeLB"
-        ).set_text(timeSpentWeekStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoTimeSpentMonteLB"
-        ).set_text(timeSpentMonthStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoTimeInactiveLB"
-        ).set_text(timeSleepStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoTimeLeftTodaeLB"
-        ).set_text(timeLeftTodayStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoContTimeLefeLB"
-        ).set_text(timeLeftTotalStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprLimitInfoTrackInactiveCB"
-        ).set_active(self._timeTrackInactive)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTLimitInfoTimeLimitOverrideLB"
-        ).set_active(self._timeTimeLimitOverridePT)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTLimitInfoUnaccountedIntervalsFlagLB"
-        ).set_active(self._timeUnaccountedIntervalsFlagPT)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTLimitInfoTimeSpentTodayLB"
-        ).set_text(timeSpentPTStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTLimitInfoTimeLeftTodayLB"
-        ).set_text(timeLeftPTStr)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTLimitInfoActivityCountLB"
-        ).set_text(self._timePTActivityCntStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoTimeSpeneLB").set_text(timeSpentStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoTimeSpentWeeeLB").set_text(timeSpentWeekStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoTimeSpentMonteLB").set_text(timeSpentMonthStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoTimeInactiveLB").set_text(timeSleepStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoTimeLeftTodaeLB").set_text(timeLeftTodayStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoContTimeLefeLB").set_text(timeLeftTotalStr)
+        self._timekprConfigDialogBuilder.get_object("timekprLimitInfoTrackInactiveCB").set_active(
+            self._timeTrackInactive
+        )
+        self._timekprConfigDialogBuilder.get_object("timekprPTLimitInfoTimeLimitOverrideLB").set_active(
+            self._timeTimeLimitOverridePT
+        )
+        self._timekprConfigDialogBuilder.get_object("timekprPTLimitInfoUnaccountedIntervalsFlagLB").set_active(
+            self._timeUnaccountedIntervalsFlagPT
+        )
+        self._timekprConfigDialogBuilder.get_object("timekprPTLimitInfoTimeSpentTodayLB").set_text(timeSpentPTStr)
+        self._timekprConfigDialogBuilder.get_object("timekprPTLimitInfoTimeLeftTodayLB").set_text(timeLeftPTStr)
+        self._timekprConfigDialogBuilder.get_object("timekprPTLimitInfoActivityCountLB").set_text(
+            self._timePTActivityCntStr
+        )
 
     def setStatus(self, pStatus):
         """Change status of timekpr"""
@@ -705,15 +577,11 @@ class timekprGUI(object):
             self._limitConfig = pLimits
 
         # hide PT page by default
-        enablePT = False
+        # enablePT = False
         # clear out days / limits / processes
         self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysLS").clear()
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTAllowedDaysLimitsDaysLS"
-        ).clear()
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprPTAllowedDaysLimitsActsLS"
-        ).clear()
+        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsDaysLS").clear()
+        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsActsLS").clear()
 
         # go in sorted order
         for rKey in sorted(self._limitConfig):
@@ -722,9 +590,7 @@ class timekprGUI(object):
                 # set locally
                 if self._limitConfig[rKey][rKey] is not None:
                     # limit
-                    timeLimitWKMON = cons.TK_DATETIME_START + timedelta(
-                        seconds=self._limitConfig[rKey][rKey]
-                    )
+                    timeLimitWKMON = cons.TK_DATETIME_START + timedelta(seconds=self._limitConfig[rKey][rKey])
                     # limit
                     timeLimitWKMONStr = self.formatTimeStr(timeLimitWKMON)
                 else:
@@ -733,49 +599,34 @@ class timekprGUI(object):
                 # set week limit
                 if rKey == cons.TK_CTRL_LIMITW:
                     # set up limits
-                    self._timekprConfigDialogBuilder.get_object(
-                        "timekprLimitForWeeeLB"
-                    ).set_text(timeLimitWKMONStr)
+                    self._timekprConfigDialogBuilder.get_object("timekprLimitForWeeeLB").set_text(timeLimitWKMONStr)
                 elif rKey == cons.TK_CTRL_LIMITM:
                     # set up limits
-                    self._timekprConfigDialogBuilder.get_object(
-                        "timekprLimitForMonteLB"
-                    ).set_text(timeLimitWKMONStr)
+                    self._timekprConfigDialogBuilder.get_object("timekprLimitForMonteLB").set_text(timeLimitWKMONStr)
             # check for override
             elif rKey == cons.TK_CTRL_PTTLO:
                 # if enabled
-                self._timeTimeLimitOverridePT = (
-                    True if bool(self._limitConfig[rKey][rKey]) else False
-                )
+                self._timeTimeLimitOverridePT = True if bool(self._limitConfig[rKey][rKey]) else False
             # check for allowed during unaccounted intervals
             elif rKey == cons.TK_CTRL_PTAUH:
                 # if enabled
-                self._timeUnaccountedIntervalsFlagPT = (
-                    True if bool(self._limitConfig[rKey][rKey]) else False
-                )
+                self._timeUnaccountedIntervalsFlagPT = True if bool(self._limitConfig[rKey][rKey]) else False
             # for the days limits
             elif rKey in ("1", "2", "3", "4", "5", "6", "7"):
                 # get time limit string
                 timeLimitStr = self.formatTimeStr(
                     (
-                        cons.TK_DATETIME_START
-                        + timedelta(
-                            seconds=self._limitConfig[rKey][cons.TK_CTRL_LIMITD]
-                        )
+                        cons.TK_DATETIME_START + timedelta(seconds=self._limitConfig[rKey][cons.TK_CTRL_LIMITD])
                         if self._limitConfig[rKey][cons.TK_CTRL_LIMITD] is not None
                         else None
                     ),
                     "t",
                 )
                 # add limit to the list
-                self._timekprConfigDialogBuilder.get_object(
-                    "timekprAllowedDaysDaysLS"
-                ).append(
+                self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysLS").append(
                     [
                         rKey,
-                        (
-                            cons.TK_DATETIME_START + timedelta(days=int(rKey) - 1)
-                        ).strftime("%A"),
+                        (cons.TK_DATETIME_START + timedelta(days=int(rKey) - 1)).strftime("%A"),
                         "%s" % (timeLimitStr),
                     ]
                 )
@@ -797,7 +648,8 @@ class timekprGUI(object):
                 # PT enable
                 if rKey == cons.TK_CTRL_PTTLE:
                     # enable PT
-                    enablePT = bool(self._limitConfig[rKey][cons.TK_CTRL_PTTLE])
+                    # enablePT = bool(self._limitConfig[rKey][cons.TK_CTRL_PTTLE])
+                    pass  # unused code ?
                 # PT limits
                 elif rKey == cons.TK_CTRL_PTLMT:
                     # for all days
@@ -814,15 +666,10 @@ class timekprGUI(object):
                             "t",
                         )
                         # add to the list
-                        self._timekprConfigDialogBuilder.get_object(
-                            "timekprPTAllowedDaysLimitsDaysLS"
-                        ).append(
+                        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsDaysLS").append(
                             [
                                 rDay[0],
-                                (
-                                    cons.TK_DATETIME_START
-                                    + timedelta(days=int(rDay[0]) - 1)
-                                ).strftime("%A"),
+                                (cons.TK_DATETIME_START + timedelta(days=int(rDay[0]) - 1)).strftime("%A"),
                                 "%s" % (timeLimitStr),
                             ]
                         )
@@ -835,26 +682,20 @@ class timekprGUI(object):
                     # all activities (source array format: 0 - friendly name, 1 - process name)
                     for rAppl in self._limitConfig[rKey][cons.TK_CTRL_PTLST]:
                         # add process to the list
-                        self._timekprConfigDialogBuilder.get_object(
-                            "timekprPTAllowedDaysLimitsActsLS"
-                        ).append(["%s" % (rAppl[1] if rAppl[1] != "" else rAppl[0])])
+                        self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsActsLS").append(
+                            ["%s" % (rAppl[1] if rAppl[1] != "" else rAppl[0])]
+                        )
 
         # determine curent day and point to it
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprAllowedDaysDaysTreeview"
-        ).set_cursor(currDay)
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprAllowedDaysDaysTreeview"
-        ).scroll_to_cell(currDay)
+        self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysTreeview").set_cursor(currDay)
+        self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysTreeview").scroll_to_cell(currDay)
         # do the same for PT
         if finalDayIdx is not None:
             # scroll to current day
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprPTAllowedDaysLimitsDaysTreeview"
-            ).set_cursor(currDay)
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprPTAllowedDaysLimitsDaysTreeview"
-            ).scroll_to_cell(currDay)
+            self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsDaysTreeview").set_cursor(currDay)
+            self._timekprConfigDialogBuilder.get_object("timekprPTAllowedDaysLimitsDaysTreeview").scroll_to_cell(
+                currDay
+            )
 
     def processConfigChanged(self):
         """Determine whether config has been changed and enable / disable apply"""
@@ -863,89 +704,61 @@ class timekprGUI(object):
         # determine what's changed
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprLimitChangeNotifCB"
-            ).get_active()
+            or self._timekprConfigDialogBuilder.get_object("timekprLimitChangeNotifCB").get_active()
             != self._timekprClientConfig.getClientShowLimitNotifications()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprShowAllNotifCB"
-            ).get_active()
+            or self._timekprConfigDialogBuilder.get_object("timekprShowAllNotifCB").get_active()
             != self._timekprClientConfig.getClientShowAllNotifications()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprUseSpeechNotifCB"
-            ).get_active()
+            or self._timekprConfigDialogBuilder.get_object("timekprUseSpeechNotifCB").get_active()
             != self._timekprClientConfig.getClientUseSpeechNotifications()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprShowSecondsCB"
-            ).get_active()
+            or self._timekprConfigDialogBuilder.get_object("timekprShowSecondsCB").get_active()
             != self._timekprClientConfig.getClientShowSeconds()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprUseNotificationSoundCB"
-            ).get_active()
+            or self._timekprConfigDialogBuilder.get_object("timekprUseNotificationSoundCB").get_active()
             != self._timekprClientConfig.getClientUseNotificationSound()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprNotificationTimeoutSB"
-            ).get_value_as_int()
+            or self._timekprConfigDialogBuilder.get_object("timekprNotificationTimeoutSB").get_value_as_int()
             != self._timekprClientConfig.getClientNotificationTimeout()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprNotificationTimeoutCriticalSB"
-            ).get_value_as_int()
+            or self._timekprConfigDialogBuilder.get_object("timekprNotificationTimeoutCriticalSB").get_value_as_int()
             != self._timekprClientConfig.getClientNotificationTimeoutCritical()
         )
         configChanged = (
             configChanged
-            or self._timekprConfigDialogBuilder.get_object(
-                "timekprLogLevelSB"
-            ).get_value_as_int()
+            or self._timekprConfigDialogBuilder.get_object("timekprLogLevelSB").get_value_as_int()
             != self._timekprClientConfig.getClientLogLevel()
         )
         # interval changes
         tmpVal = [
             [rVal[0], cons.TK_PRIO_LVL_MAP[rVal[2]]]
-            for rVal in self._timekprConfigDialogBuilder.get_object(
-                "TimekprUserNotificationConfigLS"
-            )
+            for rVal in self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigLS")
             if rVal[2] in cons.TK_PRIO_LVL_MAP and rVal[0] > 0
         ]
-        configChanged = (
-            configChanged
-            or self._timekprClientConfig.getClientNotificationLevels() != tmpVal
-        )
+        configChanged = configChanged or self._timekprClientConfig.getClientNotificationLevels() != tmpVal
         # interval changes
         tmpVal = [
             [rVal[0], cons.TK_PRIO_LVL_MAP[rVal[2]]]
-            for rVal in self._timekprConfigDialogBuilder.get_object(
-                "TimekprUserPlayTimeNotificationConfigLS"
-            )
+            for rVal in self._timekprConfigDialogBuilder.get_object("TimekprUserPlayTimeNotificationConfigLS")
             if rVal[2] in cons.TK_PRIO_LVL_MAP and rVal[0] > 0
         ]
-        configChanged = (
-            configChanged
-            or self._timekprClientConfig.getClientPlayTimeNotificationLevels() != tmpVal
-        )
+        configChanged = configChanged or self._timekprClientConfig.getClientPlayTimeNotificationLevels() != tmpVal
 
         # this is it
-        self._timekprConfigDialogBuilder.get_object("timekprSaveBT").set_sensitive(
-            configChanged
-        )
+        self._timekprConfigDialogBuilder.get_object("timekprSaveBT").set_sensitive(configChanged)
 
     # --------------- init methods --------------- #
 
@@ -988,37 +801,24 @@ class timekprGUI(object):
         """Refresh intervals when days change"""
         # refresh the child
         (tm, ti) = (
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprAllowedDaysDaysTreeview"
-            )
-            .get_selection()
-            .get_selected()
+            self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysDaysTreeview").get_selection().get_selected()
         )
         # only if there is smth selected
         if ti is not None:
             # get current seconds
             dt = datetime.now().replace(microsecond=0)
             dtd = str(datetime.date(dt).isoweekday())
-            dts = int(
-                (
-                    dt
-                    - datetime.now().replace(microsecond=0, second=0, minute=0, hour=0)
-                ).total_seconds()
-            )
+            dts = int((dt - datetime.now().replace(microsecond=0, second=0, minute=0, hour=0)).total_seconds())
             idx = 0
             selIdx = 0
             # clear out existing intervals
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprAllowedDaysIntervalsLS"
-            ).clear()
+            self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsLS").clear()
             # fill intervals only if that day exists
             if tm.get_value(ti, 0) in self._limitConfig:
                 # if no intervals
                 if not self._limitConfig[tm.get_value(ti, 0)][cons.TK_CTRL_INT]:
                     # fill in the intervals with empty values
-                    self._timekprConfigDialogBuilder.get_object(
-                        "timekprAllowedDaysIntervalsLS"
-                    ).append(
+                    self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsLS").append(
                         [("%s - %s") % (_NO_TIME_LABEL_SHORT, _NO_TIME_LABEL_SHORT), ""]
                     )
                 else:
@@ -1026,21 +826,14 @@ class timekprGUI(object):
                     for r in self._limitConfig[tm.get_value(ti, 0)][cons.TK_CTRL_INT]:
                         # determine which is the current hour
                         selIdx = (
-                            idx
-                            if r[0] is not None
-                            and r[0] <= dts <= r[1]
-                            and dtd == tm.get_value(ti, 0)
-                            else selIdx
+                            idx if r[0] is not None and r[0] <= dts <= r[1] and dtd == tm.get_value(ti, 0) else selIdx
                         )
                         # if we have no data, we fill this up with nothing
                         if r[0] is None or (r[0] == 0 and r[1] == 0):
                             # fill in the intervals with empty values
-                            self._timekprConfigDialogBuilder.get_object(
-                                "timekprAllowedDaysIntervalsLS"
-                            ).append(
+                            self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsLS").append(
                                 [
-                                    ("%s - %s")
-                                    % (_NO_TIME_LABEL_SHORT, _NO_TIME_LABEL_SHORT),
+                                    ("%s - %s") % (_NO_TIME_LABEL_SHORT, _NO_TIME_LABEL_SHORT),
                                     "",
                                 ]
                             )
@@ -1049,19 +842,13 @@ class timekprGUI(object):
                             end = cons.TK_DATETIME_START + timedelta(seconds=r[1])
                             uacc = "∞" if r[2] else ""
                             # fill in the intervals
-                            self._timekprConfigDialogBuilder.get_object(
-                                "timekprAllowedDaysIntervalsLS"
-                            ).append(
+                            self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsLS").append(
                                 [
                                     ("%s:%s - %s:%s")
                                     % (
                                         str(start.hour).rjust(2, "0"),
                                         str(start.minute).rjust(2, "0"),
-                                        (
-                                            str(end.hour).rjust(2, "0")
-                                            if r[1] < cons.TK_LIMIT_PER_DAY
-                                            else "24"
-                                        ),
+                                        (str(end.hour).rjust(2, "0") if r[1] < cons.TK_LIMIT_PER_DAY else "24"),
                                         str(end.minute).rjust(2, "0"),
                                     ),
                                     uacc,
@@ -1070,12 +857,10 @@ class timekprGUI(object):
                         # count
                         idx += 1
                 # set selection to found row
-                self._timekprConfigDialogBuilder.get_object(
-                    "timekprAllowedDaysIntervalsTreeview"
-                ).set_cursor(selIdx)
-                self._timekprConfigDialogBuilder.get_object(
-                    "timekprAllowedDaysIntervalsTreeview"
-                ).scroll_to_cell(selIdx)
+                self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsTreeview").set_cursor(selIdx)
+                self._timekprConfigDialogBuilder.get_object("timekprAllowedDaysIntervalsTreeview").scroll_to_cell(
+                    selIdx
+                )
 
     def configPageSwitchSignal(self, nb=None, pg=None, pgn=None):
         """Enable or disable apply on page change"""
@@ -1086,60 +871,40 @@ class timekprGUI(object):
         """Save the configuration using config file manager"""
         # get config, set config to manager and save it
         self._timekprClientConfig.setClientShowLimitNotifications(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprLimitChangeNotifCB"
-            ).get_active()
+            self._timekprConfigDialogBuilder.get_object("timekprLimitChangeNotifCB").get_active()
         )
         self._timekprClientConfig.setClientShowAllNotifications(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprShowAllNotifCB"
-            ).get_active()
+            self._timekprConfigDialogBuilder.get_object("timekprShowAllNotifCB").get_active()
         )
         self._timekprClientConfig.setClientUseSpeechNotifications(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprUseSpeechNotifCB"
-            ).get_active()
+            self._timekprConfigDialogBuilder.get_object("timekprUseSpeechNotifCB").get_active()
         )
         self._timekprClientConfig.setClientShowSeconds(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprShowSecondsCB"
-            ).get_active()
+            self._timekprConfigDialogBuilder.get_object("timekprShowSecondsCB").get_active()
         )
         self._timekprClientConfig.setClientUseNotificationSound(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprUseNotificationSoundCB"
-            ).get_active()
+            self._timekprConfigDialogBuilder.get_object("timekprUseNotificationSoundCB").get_active()
         )
         self._timekprClientConfig.setClientNotificationTimeout(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprNotificationTimeoutSB"
-            ).get_value_as_int()
+            self._timekprConfigDialogBuilder.get_object("timekprNotificationTimeoutSB").get_value_as_int()
         )
         self._timekprClientConfig.setClientNotificationTimeoutCritical(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprNotificationTimeoutCriticalSB"
-            ).get_value_as_int()
+            self._timekprConfigDialogBuilder.get_object("timekprNotificationTimeoutCriticalSB").get_value_as_int()
         )
         self._timekprClientConfig.setClientLogLevel(
-            self._timekprConfigDialogBuilder.get_object(
-                "timekprLogLevelSB"
-            ).get_value_as_int()
+            self._timekprConfigDialogBuilder.get_object("timekprLogLevelSB").get_value_as_int()
         )
         # save notification priorities
         tmpVal = [
             [rVal[0], cons.TK_PRIO_LVL_MAP[rVal[2]]]
-            for rVal in self._timekprConfigDialogBuilder.get_object(
-                "TimekprUserNotificationConfigLS"
-            )
+            for rVal in self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigLS")
             if rVal[2] in cons.TK_PRIO_LVL_MAP and rVal[0] > 0
         ]
         self._timekprClientConfig.setClientNotificationLevels(tmpVal)
         # save PlayTime notification priorities
         tmpVal = [
             [rVal[0], cons.TK_PRIO_LVL_MAP[rVal[2]]]
-            for rVal in self._timekprConfigDialogBuilder.get_object(
-                "TimekprUserPlayTimeNotificationConfigLS"
-            )
+            for rVal in self._timekprConfigDialogBuilder.get_object("TimekprUserPlayTimeNotificationConfigLS")
             if rVal[2] in cons.TK_PRIO_LVL_MAP and rVal[0] > 0
         ]
         self._timekprClientConfig.setClientPlayTimeNotificationLevels(tmpVal)
@@ -1147,9 +912,7 @@ class timekprGUI(object):
         # save config
         self._timekprClientConfig.saveClientConfig()
         # disable apply for now
-        self._timekprConfigDialogBuilder.get_object("timekprSaveBT").set_sensitive(
-            False
-        )
+        self._timekprConfigDialogBuilder.get_object("timekprSaveBT").set_sensitive(False)
         # enable as well
         log.setLogLevel(self._timekprClientConfig.getClientLogLevel())
 
@@ -1175,10 +938,8 @@ class timekprGUI(object):
     def setPlayTimeAccountingInfoEnabled(self, pState):
         """Whether PlayTime controls are enabled"""
         # enable page
-        self._timekprConfigDialogBuilder.get_object(
-            "timekprConfigNotebook"
-        ).get_nth_page(self._timekprPTPageNr).set_visible(pState)
-        # enable config
-        self._timekprConfigDialogBuilder.get_object(
-            "TimekprUserNotificationConfigPlayTimeGrid"
+        self._timekprConfigDialogBuilder.get_object("timekprConfigNotebook").get_nth_page(
+            self._timekprPTPageNr
         ).set_visible(pState)
+        # enable config
+        self._timekprConfigDialogBuilder.get_object("TimekprUserNotificationConfigPlayTimeGrid").set_visible(pState)

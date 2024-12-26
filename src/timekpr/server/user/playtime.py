@@ -200,9 +200,7 @@ class timekprPlayTimeConfig(object):
                         qcChk = True
 
                 # cached
-                self._cachedPids[self._PIDS][procId][self._TIM] = self._cachedPids[
-                    self._TIM
-                ]
+                self._cachedPids[self._PIDS][procId][self._TIM] = self._cachedPids[self._TIM]
                 # stats
                 cpids += 1
                 # if not QC
@@ -264,17 +262,13 @@ class timekprPlayTimeConfig(object):
                             # split this
                             exe = cmdFd.read().split("\x00")[0]
                     # we have to inspect full cmdline (the first TK_MAX_CMD_SRCH (def: 512) symbols to be precise)
-                    if (
-                        self._timekprConfig.getTimekprPlayTimeEnhancedActivityMonitorEnabled()
-                    ):
+                    if self._timekprConfig.getTimekprPlayTimeEnhancedActivityMonitorEnabled():
                         # obj
                         obj = self._CMDLINE % (procId)
                         # try reading cmdline for process
                         with open(obj, mode="r") as cmdFd:
                             # split this
-                            cmdLine = cmdFd.read().replace("\x00", " ")[
-                                : cons.TK_MAX_CMD_SRCH
-                            ]
+                            cmdLine = cmdFd.read().replace("\x00", " ")[: cons.TK_MAX_CMD_SRCH]
                 except Exception:
                     # it's not possible to get executable, but we still cache the process
                     exe = None
@@ -342,15 +336,11 @@ class timekprPlayTimeConfig(object):
                     # remove from user pids
                     if procId in self._cachedPids[self._USRS][prevUserId][self._PIDS]:
                         # remove
-                        self._cachedPids[self._USRS][prevUserId][self._PIDS].remove(
-                            procId
-                        )
+                        self._cachedPids[self._USRS][prevUserId][self._PIDS].remove(procId)
                     # remove from matched pids
                     if procId in self._cachedPids[self._USRS][prevUserId][self._MPIDS]:
                         # remove
-                        self._cachedPids[self._USRS][prevUserId][self._MPIDS].remove(
-                            procId
-                        )
+                        self._cachedPids[self._USRS][prevUserId][self._MPIDS].remove(procId)
                 # only if user is specified
                 if userId is not None:
                     # manage pids for users
@@ -374,8 +364,7 @@ class timekprPlayTimeConfig(object):
         pids = [
             rPid
             for rPid in self._cachedPids[self._PIDS]
-            if self._cachedPids[self._TIM]
-            != self._cachedPids[self._PIDS][rPid][self._TIM]
+            if self._cachedPids[self._TIM] != self._cachedPids[self._PIDS][rPid][self._TIM]
         ]
 
         # remove items
@@ -442,9 +431,7 @@ class timekprPlayTimeConfig(object):
             # now just kill
             else:
                 # logging
-                log.log(
-                    cons.TK_LOG_LEVEL_INFO, "sending kill signal to process %s" % (pPid)
-                )
+                log.log(cons.TK_LOG_LEVEL_INFO, "sending kill signal to process %s" % (pPid))
                 # kill
                 psutil.Process(pid=int(pPid)).kill()
         except:
@@ -491,9 +478,7 @@ class timekprPlayTimeConfig(object):
         # this is due to user may enter filters in a way that process matches more than one filter
         # therefore not to loose processes, this order is important
         newFlts = set([rFlt[0] for rFlt in pFlts])
-        existFlts = set(
-            [rFlt for rFlt in self._cachedPids[self._USRS][pUid][self._FLTS]]
-        )
+        existFlts = set([rFlt for rFlt in self._cachedPids[self._USRS][pUid][self._FLTS]])
         # remove obsolete filters
         for rFlt in existFlts:
             # if this is obsolete
@@ -526,15 +511,9 @@ class timekprPlayTimeConfig(object):
                 # remove brackets "[]" because we use them as description
                 flt = flt.replace("[", "").replace("]", "")
                 # add precompiled filters
-                self._cachedPids[self._USRS][pUid][self._FLTS][rFlt].append(
-                    re.compile("^%s$" % (flt))
-                )
-                self._cachedPids[self._USRS][pUid][self._FLTS][rFlt].append(
-                    re.compile("[/\\\\]%s$" % (flt))
-                )
-                self._cachedPids[self._USRS][pUid][self._FLTS][rFlt].append(
-                    re.compile("[/\\\\]%s " % (flt))
-                )
+                self._cachedPids[self._USRS][pUid][self._FLTS][rFlt].append(re.compile("^%s$" % (flt)))
+                self._cachedPids[self._USRS][pUid][self._FLTS][rFlt].append(re.compile("[/\\\\]%s$" % (flt)))
+                self._cachedPids[self._USRS][pUid][self._FLTS][rFlt].append(re.compile("[/\\\\]%s " % (flt)))
                 # add matched pids to to matched pid list
                 self._cachedPids[self._USRS][pUid][self._MPIDS].update(
                     self._getMatchedProcessesByFilter(
@@ -551,8 +530,7 @@ class timekprPlayTimeConfig(object):
             # logging
             log.log(
                 cons.TK_LOG_LEVEL_INFO,
-                'killing %i PT processes for uid "%s" '
-                % (len(self._cachedPids[self._USRS][pUid][self._MPIDS]), pUid),
+                'killing %i PT processes for uid "%s" ' % (len(self._cachedPids[self._USRS][pUid][self._MPIDS]), pUid),
             )
             # terminate / kill all user PT processes
             for rPid in self._cachedPids[self._USRS][pUid][self._MPIDS]:
@@ -563,12 +541,7 @@ class timekprPlayTimeConfig(object):
                     0.1,
                     self._scheduleKill,
                     rPid,
-                    (
-                        True
-                        if self._cachedPids[self._PIDS][rPid][self._TERM]
-                        > cons.TK_POLLTIME
-                        else False
-                    ),
+                    (True if self._cachedPids[self._PIDS][rPid][self._TERM] > cons.TK_POLLTIME else False),
                 )
 
     # --------------- helper methods --------------- #

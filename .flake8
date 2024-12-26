@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 120
+exclude =
+    # No need to traverse our git directory
+    ".git",
+    # There's no value in checking cache directories
+    "__pycache__"
+
+# Use extend-ignore to add to already ignored checks which are anti-patterns like W503.
+extend-ignore =
+    # whitespace before ':'
+    E203,
+    # line too long
+    E501,
+    # module level import not at top of file
+    E402,
+    # do not use bare 'except'
+    E722,

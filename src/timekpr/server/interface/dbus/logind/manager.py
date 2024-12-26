@@ -54,9 +54,7 @@ class timekprUserLoginManager(object):
             # dbus performance measurement
             misc.measureDBUSTimeElapsed(pStart=True)
             # try to get real connection to our objects and interface
-            self._login1Object = self._timekprBus.get_object(
-                cons.TK_DBUS_L1_OBJECT, cons.TK_DBUS_L1_PATH
-            )
+            self._login1Object = self._timekprBus.get_object(cons.TK_DBUS_L1_OBJECT, cons.TK_DBUS_L1_PATH)
             # measurement logging
             misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_L1_OBJECT)
 
@@ -65,17 +63,11 @@ class timekprUserLoginManager(object):
             # dbus performance measurement
             misc.measureDBUSTimeElapsed(pStart=True)
             # interface
-            self._login1ManagerInterface = dbus.Interface(
-                self._login1Object, cons.TK_DBUS_L1_MANAGER_INTERFACE
-            )
+            self._login1ManagerInterface = dbus.Interface(self._login1Object, cons.TK_DBUS_L1_MANAGER_INTERFACE)
             # measurement logging
-            misc.measureDBUSTimeElapsed(
-                pStop=True, pDbusIFName=cons.TK_DBUS_L1_MANAGER_INTERFACE
-            )
+            misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_L1_MANAGER_INTERFACE)
 
-            log.log(
-                cons.TK_LOG_LEVEL_DEBUG, "got interface, login1 successfully set up"
-            )
+            log.log(cons.TK_LOG_LEVEL_DEBUG, "got interface, login1 successfully set up")
 
             # reset retries
             self._connectionRetryCount = 0
@@ -99,10 +91,7 @@ class timekprUserLoginManager(object):
         loggedInUsersDBUS = None
         wasConnectionLost = False
         # try executing when there are retries left and there is no result
-        while (
-            loggedInUsersDBUS is None
-            and self._connectionRetryCount < cons.TK_MAX_RETRIES
-        ):
+        while loggedInUsersDBUS is None and self._connectionRetryCount < cons.TK_MAX_RETRIES:
             # try get result
             try:
                 # exec
@@ -121,11 +110,7 @@ class timekprUserLoginManager(object):
 
     def getUserList(self, pSilent=False):
         """Go through a list of logged in users"""
-        (
-            log.log(cons.TK_LOG_LEVEL_EXTRA_DEBUG, "start getUserList")
-            if not pSilent
-            else True
-        )
+        (log.log(cons.TK_LOG_LEVEL_EXTRA_DEBUG, "start getUserList") if not pSilent else True)
 
         # get user list
         wasConnectionLost, loggedInUsersDBUS = self._listUsers()
@@ -151,11 +136,7 @@ class timekprUserLoginManager(object):
                     uNameLog = "%s, %s: %s" % (uNameLog, keyx, valuex)
                 log.log(cons.TK_LOG_LEVEL_DEBUG, uNameLog)
 
-        (
-            log.log(cons.TK_LOG_LEVEL_EXTRA_DEBUG, "finish getUserList")
-            if not pSilent
-            else True
-        )
+        (log.log(cons.TK_LOG_LEVEL_EXTRA_DEBUG, "finish getUserList") if not pSilent else True)
 
         # passing back user tuples
         return wasConnectionLost, loggedInUsers
@@ -168,29 +149,21 @@ class timekprUserLoginManager(object):
         # dbus performance measurement
         misc.measureDBUSTimeElapsed(pStart=True)
         # get dbus object
-        login1UserObject = self._timekprBus.get_object(
-            cons.TK_DBUS_L1_OBJECT, pUserPath
-        )
+        login1UserObject = self._timekprBus.get_object(cons.TK_DBUS_L1_OBJECT, pUserPath)
         # measurement logging
         misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=pUserPath)
 
         # dbus performance measurement
         misc.measureDBUSTimeElapsed(pStart=True)
         # get dbus interface for properties
-        login1UserInterface = dbus.Interface(
-            login1UserObject, cons.TK_DBUS_PROPERTIES_INTERFACE
-        )
+        login1UserInterface = dbus.Interface(login1UserObject, cons.TK_DBUS_PROPERTIES_INTERFACE)
         # measurement logging
-        misc.measureDBUSTimeElapsed(
-            pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE
-        )
+        misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE)
 
         # dbus performance measurement
         misc.measureDBUSTimeElapsed(pStart=True)
         # get all user sessions
-        login1UserSessions = login1UserInterface.Get(
-            cons.TK_DBUS_USER_OBJECT, "Sessions"
-        )
+        login1UserSessions = login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "Sessions")
         # measurement logging
         misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_USER_OBJECT)
 
@@ -199,44 +172,28 @@ class timekprUserLoginManager(object):
             # dbus performance measurement
             misc.measureDBUSTimeElapsed(pStart=True)
             # get dbus object
-            login1SessionObject = self._timekprBus.get_object(
-                cons.TK_DBUS_L1_OBJECT, str(rUserSession[1])
-            )
+            login1SessionObject = self._timekprBus.get_object(cons.TK_DBUS_L1_OBJECT, str(rUserSession[1]))
             # measurement logging
             misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=str(rUserSession[1]))
 
             # dbus performance measurement
             misc.measureDBUSTimeElapsed(pStart=True)
             # get dbus interface for properties
-            login1SessionInterface = dbus.Interface(
-                login1SessionObject, cons.TK_DBUS_PROPERTIES_INTERFACE
-            )
+            login1SessionInterface = dbus.Interface(login1SessionObject, cons.TK_DBUS_PROPERTIES_INTERFACE)
             # measurement logging
-            misc.measureDBUSTimeElapsed(
-                pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE
-            )
+            misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE)
 
             # get all user session properties
             try:
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # properties
-                sessionType = str(
-                    login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "Type")
-                )
-                sessionVTNr = str(
-                    int(login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "VTNr"))
-                )
-                sessionSeat = str(
-                    login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "Seat")[0]
-                )
-                sessionState = str(
-                    login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "State")
-                )
+                sessionType = str(login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "Type"))
+                sessionVTNr = str(int(login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "VTNr")))
+                sessionSeat = str(login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "Seat")[0])
+                sessionState = str(login1SessionInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "State"))
                 # measurement logging
-                misc.measureDBUSTimeElapsed(
-                    pStop=True, pDbusIFName=cons.TK_DBUS_SESSION_OBJECT
-                )
+                misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_SESSION_OBJECT)
 
                 # add user session to return list
                 userSessions.append(
@@ -252,8 +209,7 @@ class timekprUserLoginManager(object):
             except Exception as exc:
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    'ERROR: error getting session properties for session "%s" DBUS: %s'
-                    % (str(rUserSession[1]), exc),
+                    'ERROR: error getting session properties for session "%s" DBUS: %s' % (str(rUserSession[1]), exc),
                 )
 
             # free
@@ -268,10 +224,7 @@ class timekprUserLoginManager(object):
     def determineLoginManagerVT(self, pUserName, pUserPath):
         """Get login manager session VTNr"""
         # if we did not yet find a login manager VTNr
-        if (
-            self._loginManagerVTNr is None
-            and self._loginManagerVTNrRetries < cons.TK_MAX_RETRIES
-        ):
+        if self._loginManagerVTNr is None and self._loginManagerVTNrRetries < cons.TK_MAX_RETRIES:
             # def
             loginManager = None
             # loop through login managers
@@ -324,28 +277,22 @@ class timekprUserLoginManager(object):
                     # seat is found
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        "INFO: login manager (%s) TTY found: %s"
-                        % (pUserName, self._loginManagerVTNr),
+                        "INFO: login manager (%s) TTY found: %s" % (pUserName, self._loginManagerVTNr),
                     )
             else:
                 # log
                 log.log(
                     cons.TK_LOG_LEVEL_DEBUG,
-                    "INFO: searching for login manager, user (%s) does not look like one"
-                    % (pUserName),
+                    "INFO: searching for login manager, user (%s) does not look like one" % (pUserName),
                 )
         # in case we tried hard
-        elif (
-            self._loginManagerVTNr is None
-            and self._loginManagerVTNrRetries == cons.TK_MAX_RETRIES
-        ):
+        elif self._loginManagerVTNr is None and self._loginManagerVTNrRetries == cons.TK_MAX_RETRIES:
             # advance counter (so we never get here again)
             self._loginManagerVTNrRetries += 1
             # seat is NOT found and we'll not try to find it anymore
             log.log(
                 cons.TK_LOG_LEVEL_INFO,
-                "INFO: login manager (%s) TTY is NOT found, giving up until restart"
-                % (pUserName),
+                "INFO: login manager (%s) TTY is NOT found, giving up until restart" % (pUserName),
             )
 
     def switchTTY(self, pSeatId, pForce):
@@ -369,23 +316,17 @@ class timekprUserLoginManager(object):
                 willSwitchTTY = False
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    "ERROR: error getting seat (%s) from DBUS: %s"
-                    % (str(pSeatId), exc),
+                    "ERROR: error getting seat (%s) from DBUS: %s" % (str(pSeatId), exc),
                 )
 
             # only if we got the seat
             if willSwitchTTY:
                 # seat object processing
-                login1SeatObject = self._timekprBus.get_object(
-                    cons.TK_DBUS_L1_OBJECT, seat
-                )
-                login1SeatInterface = dbus.Interface(
-                    login1SeatObject, cons.TK_DBUS_SEAT_OBJECT
-                )
+                login1SeatObject = self._timekprBus.get_object(cons.TK_DBUS_L1_OBJECT, seat)
+                login1SeatInterface = dbus.Interface(login1SeatObject, cons.TK_DBUS_SEAT_OBJECT)
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    "INFO:%s switching TTY to %s"
-                    % (" (forced)" if pForce else "", self._loginManagerVTNr),
+                    "INFO:%s switching TTY to %s" % (" (forced)" if pForce else "", self._loginManagerVTNr),
                 )
                 # finally switching the TTY
                 if cons.TK_DEV_ACTIVE:
@@ -472,8 +413,7 @@ class timekprUserLoginManager(object):
             else:
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    'saving "%s" session %s (%s)'
-                    % (pUserName, rUserSession["sessionPath"], rUserSession["type"]),
+                    'saving "%s" session %s (%s)' % (pUserName, rUserSession["sessionPath"], rUserSession["type"]),
                 )
 
         # kill leftover processes (if we are killing smth)
@@ -488,9 +428,7 @@ class timekprUserLoginManager(object):
             # schedule a switch
             GLib.timeout_add_seconds(tmo, self.switchTTY, lastSeat, False)
         else:
-            log.log(
-                cons.TK_LOG_LEVEL_INFO, "TTY switch ommitted for user %s" % (pUserName)
-            )
+            log.log(cons.TK_LOG_LEVEL_INFO, "TTY switch ommitted for user %s" % (pUserName))
 
         # cleanup
         if sessionsToKill > 0:
@@ -502,9 +440,7 @@ class timekprUserLoginManager(object):
                 "dipatching a killer for leftover processes after %i seconds" % (tmo),
             )
             # schedule leftover processes to be killed (it's rather sophisticated killing and checks whether we need to kill gui or terminal processes)
-            GLib.timeout_add_seconds(
-                tmo, misc.killLeftoverUserProcesses, pUserName, pTimekprConfig
-            )
+            GLib.timeout_add_seconds(tmo, misc.killLeftoverUserProcesses, pUserName, pTimekprConfig)
 
         log.log(cons.TK_LOG_LEVEL_EXTRA_DEBUG, "finish terminateUserSessions")
 

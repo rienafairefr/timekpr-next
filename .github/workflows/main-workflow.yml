@@ -1,0 +1,22 @@
+name: Workflow
+
+on:
+  push:
+    branches: ['*']
+    tags: ['*']
+  pull_request:
+    branches: ['*']
+
+jobs:
+  call-python-test-lint:
+    uses: ./.github/workflows/python-package.yml
+  linux-package:
+    uses: ./.github/workflows/debian-package.yml
+  release:
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    uses: ./.github/workflows/publish-release.yml
+    needs:
+      - call-python-test-lint
+      - linux-package
+    permissions:
+      contents: write

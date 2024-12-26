@@ -26,31 +26,23 @@ class timekprUserManager(object):
         # dbus performance measurement
         misc.measureDBUSTimeElapsed(pStart=True)
         # get dbus object
-        self._login1UserObject = self._timekprBus.get_object(
-            cons.TK_DBUS_L1_OBJECT, pUserPathOnBus
-        )
+        self._login1UserObject = self._timekprBus.get_object(cons.TK_DBUS_L1_OBJECT, pUserPathOnBus)
         # measurement logging
         misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_L1_OBJECT)
 
         # dbus performance measurement
         misc.measureDBUSTimeElapsed(pStart=True)
         # get dbus interface for properties
-        self._login1UserInterface = dbus.Interface(
-            self._login1UserObject, cons.TK_DBUS_PROPERTIES_INTERFACE
-        )
+        self._login1UserInterface = dbus.Interface(self._login1UserObject, cons.TK_DBUS_PROPERTIES_INTERFACE)
         # measurement logging
-        misc.measureDBUSTimeElapsed(
-            pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE
-        )
+        misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE)
 
         # user sessions & additional DBUS objects
         self._timekprUserSessions = {}
         self._timekprUserObjects = {}
 
         # get user ID
-        self._userId = int(
-            self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "UID")
-        )
+        self._userId = int(self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "UID"))
         self._scrRetryCnt = 0
         self._sessionLockedStateAvailable = None
 
@@ -63,9 +55,7 @@ class timekprUserManager(object):
         # dbus performance measurement
         misc.measureDBUSTimeElapsed(pStart=True)
         # get all user sessions
-        userSessions = self._login1UserInterface.Get(
-            cons.TK_DBUS_USER_OBJECT, "Sessions"
-        )
+        userSessions = self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "Sessions")
         # measurement logging
         misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_USER_OBJECT)
 
@@ -77,12 +67,7 @@ class timekprUserManager(object):
                 "got %i sessions:%s, start loop"
                 % (
                     len(userSessions),
-                    "".join(
-                        [
-                            (" (%s, %s)" % (str(rS[0]), str(rS[1])))
-                            for rS in userSessions
-                        ]
-                    ),
+                    "".join([(" (%s, %s)" % (str(rS[0]), str(rS[1]))) for rS in userSessions]),
                 ),
             )
 
@@ -106,35 +91,23 @@ class timekprUserManager(object):
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # get object and interface to save it
-                sessionObject = self._timekprBus.get_object(
-                    cons.TK_DBUS_L1_OBJECT, sessionPath
-                )
+                sessionObject = self._timekprBus.get_object(cons.TK_DBUS_L1_OBJECT, sessionPath)
                 # measurement logging
-                misc.measureDBUSTimeElapsed(
-                    pStop=True, pDbusIFName=cons.TK_DBUS_L1_OBJECT
-                )
+                misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_L1_OBJECT)
 
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # get object and interface to save it
-                sessionPropertiesInterface = dbus.Interface(
-                    sessionObject, cons.TK_DBUS_PROPERTIES_INTERFACE
-                )
+                sessionPropertiesInterface = dbus.Interface(sessionObject, cons.TK_DBUS_PROPERTIES_INTERFACE)
                 # measurement logging
-                misc.measureDBUSTimeElapsed(
-                    pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE
-                )
+                misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_PROPERTIES_INTERFACE)
 
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # get dbus interface for Session
-                sessionInterface = dbus.Interface(
-                    sessionObject, cons.TK_DBUS_SESSION_OBJECT
-                )
+                sessionInterface = dbus.Interface(sessionObject, cons.TK_DBUS_SESSION_OBJECT)
                 # measurement logging
-                misc.measureDBUSTimeElapsed(
-                    pStop=True, pDbusIFName=cons.TK_DBUS_SESSION_OBJECT
-                )
+                misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_SESSION_OBJECT)
 
                 # cache sessions
                 self._timekprUserSessions[sessionId] = {
@@ -145,32 +118,18 @@ class timekprUserManager(object):
                 }
 
                 # add static properties
-                self._timekprUserSessions[sessionId][cons.TK_CTRL_DBUS_SESS_PROP][
-                    "VTNr"
-                ] = str(
-                    int(
-                        sessionPropertiesInterface.Get(
-                            cons.TK_DBUS_SESSION_OBJECT, "VTNr"
-                        )
-                    )
+                self._timekprUserSessions[sessionId][cons.TK_CTRL_DBUS_SESS_PROP]["VTNr"] = str(
+                    int(sessionPropertiesInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "VTNr"))
                 )
-                self._timekprUserSessions[sessionId][cons.TK_CTRL_DBUS_SESS_PROP][
-                    "Seat"
-                ] = str(
-                    sessionPropertiesInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "Seat")[
-                        0
-                    ]
+                self._timekprUserSessions[sessionId][cons.TK_CTRL_DBUS_SESS_PROP]["Seat"] = str(
+                    sessionPropertiesInterface.Get(cons.TK_DBUS_SESSION_OBJECT, "Seat")[0]
                 )
             else:
-                log.log(
-                    cons.TK_LOG_LEVEL_DEBUG, "session already cached: %s" % (sessionId)
-                )
+                log.log(cons.TK_LOG_LEVEL_DEBUG, "session already cached: %s" % (sessionId))
 
         # list of sessions to delete
         removableSesssions = [
-            rUserSession
-            for rUserSession in self._timekprUserSessions
-            if rUserSession not in activeSessions
+            rUserSession for rUserSession in self._timekprUserSessions if rUserSession not in activeSessions
         ]
 
         # get rid of sessions not on the list
@@ -191,22 +150,16 @@ class timekprUserManager(object):
         )
         log.log(
             cons.TK_LOG_LEVEL_EXTRA_DEBUG,
-            "supported session types: %s"
-            % (str(pTimekprConfig.getTimekprSessionsCtrl())),
+            "supported session types: %s" % (str(pTimekprConfig.getTimekprSessionsCtrl())),
         )
 
         # get all user sessions
-        userState = str(
-            self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "State")
-        )
-        userIdleState = str(
-            bool(self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "IdleHint"))
-        )
+        userState = str(self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "State"))
+        userIdleState = str(bool(self._login1UserInterface.Get(cons.TK_DBUS_USER_OBJECT, "IdleHint")))
 
         log.log(
             cons.TK_LOG_LEVEL_DEBUG,
-            "user stats, ul1st: %s, ul1idlhnt: %s, uscrlck: %s"
-            % (userState, userIdleState, str(pIsScreenLocked)),
+            "user stats, ul1st: %s, ul1idlhnt: %s, uscrlck: %s" % (userState, userIdleState, str(pIsScreenLocked)),
         )
 
         # cache sessions
@@ -246,39 +199,34 @@ class timekprUserManager(object):
                 # dbus performance measurement
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # get needed static properties
-                sessionVTNr = self._timekprUserSessions[rSessionId][
-                    cons.TK_CTRL_DBUS_SESS_PROP
-                ]["VTNr"]
+                sessionVTNr = self._timekprUserSessions[rSessionId][cons.TK_CTRL_DBUS_SESS_PROP]["VTNr"]
                 # get needed properties
                 sessionType = str(
-                    self._timekprUserSessions[rSessionId][
-                        cons.TK_CTRL_DBUS_SESS_PROP_IF
-                    ].Get(cons.TK_DBUS_SESSION_OBJECT, "Type")
+                    self._timekprUserSessions[rSessionId][cons.TK_CTRL_DBUS_SESS_PROP_IF].Get(
+                        cons.TK_DBUS_SESSION_OBJECT, "Type"
+                    )
                 )
                 sessionState = str(
-                    self._timekprUserSessions[rSessionId][
-                        cons.TK_CTRL_DBUS_SESS_PROP_IF
-                    ].Get(cons.TK_DBUS_SESSION_OBJECT, "State")
+                    self._timekprUserSessions[rSessionId][cons.TK_CTRL_DBUS_SESS_PROP_IF].Get(
+                        cons.TK_DBUS_SESSION_OBJECT, "State"
+                    )
                 )
                 sessionIdleState = str(
                     bool(
-                        self._timekprUserSessions[rSessionId][
-                            cons.TK_CTRL_DBUS_SESS_PROP_IF
-                        ].Get(cons.TK_DBUS_SESSION_OBJECT, "IdleHint")
+                        self._timekprUserSessions[rSessionId][cons.TK_CTRL_DBUS_SESS_PROP_IF].Get(
+                            cons.TK_DBUS_SESSION_OBJECT, "IdleHint"
+                        )
                     )
                 )
                 # get locked state, only if it's available
-                if (
-                    self._sessionLockedStateAvailable
-                    or self._sessionLockedStateAvailable is None
-                ):
+                if self._sessionLockedStateAvailable or self._sessionLockedStateAvailable is None:
                     try:
                         # get locked state
                         sessionLockedState = str(
                             bool(
-                                self._timekprUserSessions[rSessionId][
-                                    cons.TK_CTRL_DBUS_SESS_PROP_IF
-                                ].Get(cons.TK_DBUS_SESSION_OBJECT, "LockedHint")
+                                self._timekprUserSessions[rSessionId][cons.TK_CTRL_DBUS_SESS_PROP_IF].Get(
+                                    cons.TK_DBUS_SESSION_OBJECT, "LockedHint"
+                                )
                             )
                         )
                         # locked state available
@@ -313,11 +261,7 @@ class timekprUserManager(object):
                 )
 
                 # check if active
-                if (
-                    sessionState == "active"
-                    and sessionIdleState == "False"
-                    and sessionLockedState == "False"
-                ):
+                if sessionState == "active" and sessionIdleState == "False" and sessionLockedState == "False":
                     # validate against session types we specifically do not track
                     if sessionType in pTimekprConfig.getTimekprSessionsExcl():
                         # session is on the list of session types we specifically do not track
@@ -337,9 +281,7 @@ class timekprUserManager(object):
                     else:
                         # session is on the list of session types we track and session is active
                         userActive = True
-                        log.log(
-                            cons.TK_LOG_LEVEL_DEBUG, "session %s active" % (rSessionId)
-                        )
+                        log.log(cons.TK_LOG_LEVEL_DEBUG, "session %s active" % (rSessionId))
                 elif sessionType in pTimekprConfig.getTimekprSessionsCtrl():
                     # session can be: offline, closing, online, lingering, active
                     # do not count lingering, offline and closing sessions as active either way
@@ -347,8 +289,7 @@ class timekprUserManager(object):
                         # user is not active
                         log.log(
                             cons.TK_LOG_LEVEL_DEBUG,
-                            "session %s is inactive (not exactly logged in too)"
-                            % (rSessionId),
+                            "session %s is inactive (not exactly logged in too)" % (rSessionId),
                         )
                     # if we track inactive
                     elif pTimekprUserConfig.getUserTrackInactive():
@@ -357,8 +298,7 @@ class timekprUserManager(object):
                         # session is not on the list of session types we track
                         log.log(
                             cons.TK_LOG_LEVEL_DEBUG,
-                            "session %s is considered active (track inactive sessions enabled)"
-                            % (rSessionId),
+                            "session %s is considered active (track inactive sessions enabled)" % (rSessionId),
                         )
                     else:
                         # session is not active
@@ -391,9 +331,9 @@ class timekprUserManager(object):
             # we lock only GUI sessions
             if (
                 str(
-                    self._timekprUserSessions[rSessionId][
-                        cons.TK_CTRL_DBUS_SESS_PROP_IF
-                    ].Get(cons.TK_DBUS_SESSION_OBJECT, "Type")
+                    self._timekprUserSessions[rSessionId][cons.TK_CTRL_DBUS_SESS_PROP_IF].Get(
+                        cons.TK_DBUS_SESSION_OBJECT, "Type"
+                    )
                 )
                 in cons.TK_SESSION_TYPES_CTRL
             ):

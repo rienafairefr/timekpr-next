@@ -5,7 +5,6 @@ Created on Aug 28, 2018
 """
 
 import locale
-import time
 
 # init speech
 try:
