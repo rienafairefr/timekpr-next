@@ -42,11 +42,7 @@ class timekprNotifications(object):
         # session bus
         self._userSessionBus = dbus.SessionBus()
         # timekpr bus
-        self._timekprBus = (
-            dbus.SessionBus()
-            if (cons.TK_DEV_ACTIVE and cons.TK_DEV_BUS == "ses")
-            else dbus.SystemBus()
-        )
+        self._timekprBus = dbus.SessionBus() if (cons.TK_DEV_ACTIVE and cons.TK_DEV_BUS == "ses") else dbus.SystemBus()
 
         # DBUS client connections
         # connection types
@@ -127,11 +123,9 @@ class timekprNotifications(object):
                     # dbus performance measurement
                     misc.measureDBUSTimeElapsed(pStart=True)
                     # getting interface
-                    self._dbusConnections[self.CL_CONN_NOTIF][self.CL_IF] = (
-                        dbus.Interface(
-                            self._userSessionBus.get_object(iNames[idx], iPaths[idx]),
-                            iNames[idx],
-                        )
+                    self._dbusConnections[self.CL_CONN_NOTIF][self.CL_IF] = dbus.Interface(
+                        self._userSessionBus.get_object(iNames[idx], iPaths[idx]),
+                        iNames[idx],
                     )
                     # measurement logging
                     misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=iNames[idx])
@@ -144,16 +138,10 @@ class timekprNotifications(object):
                     # log
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        'INFO: connected to notification service through "%s"'
-                        % (iNames[idx]),
+                        'INFO: connected to notification service through "%s"' % (iNames[idx]),
                     )
                     # check capabilities
-                    if (
-                        "sound"
-                        not in self._dbusConnections[self.CL_CONN_NOTIF][
-                            self.CL_IF
-                        ].GetCapabilities()
-                    ):
+                    if "sound" not in self._dbusConnections[self.CL_CONN_NOTIF][self.CL_IF].GetCapabilities():
                         # notifications w/ sound are not available
                         self._timekprClientConfig.setIsNotificationSoundSupported(False)
                         # log
@@ -162,19 +150,16 @@ class timekprNotifications(object):
                             "INFO: notification sound is not supported",
                         )
                     # add a connection to signal
-                    self._dbusConnections[self.CL_CONN_NOTIF][self.CL_SI] = (
-                        self._userSessionBus.add_signal_receiver(
-                            path=iPaths[idx],
-                            handler_function=self.receiveNotificationClosed,
-                            dbus_interface=iNames[idx],
-                            signal_name="NotificationClosed",
-                        )
+                    self._dbusConnections[self.CL_CONN_NOTIF][self.CL_SI] = self._userSessionBus.add_signal_receiver(
+                        path=iPaths[idx],
+                        handler_function=self.receiveNotificationClosed,
+                        dbus_interface=iNames[idx],
+                        signal_name="NotificationClosed",
                     )
                     # log
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        'INFO: connected to notification closing callback service through "%s"'
-                        % (iNames[idx]),
+                        'INFO: connected to notification closing callback service through "%s"' % (iNames[idx]),
                     )
                     # finish
                     break
@@ -230,23 +215,15 @@ class timekprNotifications(object):
                         % (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1]),
                     )
                     # use gnome stuff
-                    iNames.extend(
-                        ["org.%s.ScreenSaver" % (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1])]
-                    )
-                    iPaths.extend(
-                        ["/org/%s/ScreenSaver" % (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1])]
-                    )
+                    iNames.extend(["org.%s.ScreenSaver" % (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1])])
+                    iPaths.extend(["/org/%s/ScreenSaver" % (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1])])
                     # check if gnome screensaver is used (can it be used as failover?)
                     isGnomeScrUsed = (
-                        (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1] == "gnome")
-                        if not isGnomeScrUsed
-                        else isGnomeScrUsed
+                        (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1] == "gnome") if not isGnomeScrUsed else isGnomeScrUsed
                     )
                     # check if freedesktop screensaver is used (can it be used as failover?)
                     isFDScrUsed = (
-                        (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1] == "freedesktop")
-                        if not isFDScrUsed
-                        else isFDScrUsed
+                        (cons.TK_SCR_XDGCD_OVERRIDE[rIdx][1] == "freedesktop") if not isFDScrUsed else isFDScrUsed
                     )
                     # first match is enough
                     break
@@ -262,16 +239,13 @@ class timekprNotifications(object):
                 if currentDE is not None and currentDE != "":
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        'INFO: trying to use "%s" as screensaver dbus object'
-                        % (currentDE),
+                        'INFO: trying to use "%s" as screensaver dbus object' % (currentDE),
                     )
                     # add
                     iNames.extend(["org.%s.ScreenSaver" % (currentDE)])
                     iPaths.extend(["/org/%s/ScreenSaver" % (currentDE)])
                     # check if gnome screensaver is used (can it be used as failover?)
-                    isGnomeScrUsed = (
-                        (currentDE == "gnome") if not isGnomeScrUsed else isGnomeScrUsed
-                    )
+                    isGnomeScrUsed = (currentDE == "gnome") if not isGnomeScrUsed else isGnomeScrUsed
 
                 # add gnome (most popular)
                 if not isGnomeScrUsed:
@@ -293,17 +267,14 @@ class timekprNotifications(object):
                     # dbus performance measurement
                     misc.measureDBUSTimeElapsed(pStart=True)
                     # getting interface
-                    self._dbusConnections[self.CL_CONN_SCR][self.CL_IF] = (
-                        dbus.Interface(
-                            self._userSessionBus.get_object(iNames[idx], iPaths[idx]),
-                            iNames[idx],
-                        )
+                    self._dbusConnections[self.CL_CONN_SCR][self.CL_IF] = dbus.Interface(
+                        self._userSessionBus.get_object(iNames[idx], iPaths[idx]),
+                        iNames[idx],
                     )
                     # log
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        'INFO: connected to screensaver service through "%s"'
-                        % (iNames[idx]),
+                        'INFO: connected to screensaver service through "%s"' % (iNames[idx]),
                     )
                     # verification (Gnome has not implemented freedesktop methods, we need to verify this actually works)
                     self._dbusConnections[self.CL_CONN_SCR][self.CL_IF].GetActive()
@@ -334,23 +305,19 @@ class timekprNotifications(object):
                 # log
                 log.log(
                     cons.TK_LOG_LEVEL_DEBUG,
-                    "CONNECTED to DBUS %s (%s) interface"
-                    % (self.CL_CONN_SCR, iNames[chosenIdx]),
+                    "CONNECTED to DBUS %s (%s) interface" % (self.CL_CONN_SCR, iNames[chosenIdx]),
                 )
                 # add a connection to signal
-                self._dbusConnections[self.CL_CONN_SCR][self.CL_SI] = (
-                    self._userSessionBus.add_signal_receiver(
-                        path=iPaths[chosenIdx],
-                        handler_function=self.receiveScreenSaverActivityChange,
-                        dbus_interface=iNames[chosenIdx],
-                        signal_name="ActiveChanged",
-                    )
+                self._dbusConnections[self.CL_CONN_SCR][self.CL_SI] = self._userSessionBus.add_signal_receiver(
+                    path=iPaths[chosenIdx],
+                    handler_function=self.receiveScreenSaverActivityChange,
+                    dbus_interface=iNames[chosenIdx],
+                    signal_name="ActiveChanged",
                 )
                 # log
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    'INFO: connected to screensaver active callback signal through "%s"'
-                    % (iNames[chosenIdx]),
+                    'INFO: connected to screensaver active callback signal through "%s"' % (iNames[chosenIdx]),
                 )
 
         # only if screensaver is not ok
@@ -364,9 +331,7 @@ class timekprNotifications(object):
                 misc.measureDBUSTimeElapsed(pStart=True)
                 # getting interface
                 self._dbusConnections[self.CL_CONN_TK][self.CL_IF] = dbus.Interface(
-                    self._timekprBus.get_object(
-                        cons.TK_DBUS_BUS_NAME, cons.TK_DBUS_SERVER_PATH
-                    ),
+                    self._timekprBus.get_object(cons.TK_DBUS_BUS_NAME, cons.TK_DBUS_SERVER_PATH),
                     cons.TK_DBUS_USER_LIMITS_INTERFACE,
                 )
                 # log
@@ -377,21 +342,17 @@ class timekprNotifications(object):
                 # log
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    'INFO: connected to timekpr limits service through "%s"'
-                    % (cons.TK_DBUS_USER_LIMITS_INTERFACE),
+                    'INFO: connected to timekpr limits service through "%s"' % (cons.TK_DBUS_USER_LIMITS_INTERFACE),
                 )
                 # getting interface
                 self._dbusConnections[self.CL_CONN_TK][self.CL_IFA] = dbus.Interface(
-                    self._timekprBus.get_object(
-                        cons.TK_DBUS_BUS_NAME, cons.TK_DBUS_SERVER_PATH
-                    ),
+                    self._timekprBus.get_object(cons.TK_DBUS_BUS_NAME, cons.TK_DBUS_SERVER_PATH),
                     cons.TK_DBUS_USER_SESSION_ATTRIBUTE_INTERFACE,
                 )
                 # log
                 log.log(
                     cons.TK_LOG_LEVEL_DEBUG,
-                    "CONNECTED to %s DBUS %s interface"
-                    % (self.CL_CONN_TK, self.CL_IFA),
+                    "CONNECTED to %s DBUS %s interface" % (self.CL_CONN_TK, self.CL_IFA),
                 )
                 # log
                 log.log(
@@ -400,9 +361,7 @@ class timekprNotifications(object):
                     % (cons.TK_DBUS_USER_SESSION_ATTRIBUTE_INTERFACE),
                 )
                 # measurement logging
-                misc.measureDBUSTimeElapsed(
-                    pStop=True, pDbusIFName=cons.TK_DBUS_USER_LIMITS_INTERFACE
-                )
+                misc.measureDBUSTimeElapsed(pStop=True, pDbusIFName=cons.TK_DBUS_USER_LIMITS_INTERFACE)
             except Exception as dbusEx:
                 # reset
                 self._dbusConnections[self.CL_CONN_TK][self.CL_IF] = None
@@ -450,15 +409,13 @@ class timekprNotifications(object):
                             # logging
                             log.log(
                                 cons.TK_LOG_LEVEL_INFO,
-                                "ERROR: failed to connect to %s dbus, trying again..."
-                                % (rConn),
+                                "ERROR: failed to connect to %s dbus, trying again..." % (rConn),
                             )
                     else:
                         # connection aborted
                         log.log(
                             cons.TK_LOG_LEVEL_INFO,
-                            "WARNING: dbus connection to %s failed, some functionality will not be available"
-                            % (rConn),
+                            "WARNING: dbus connection to %s failed, some functionality will not be available" % (rConn),
                         )
 
         # retry
@@ -489,25 +446,17 @@ class timekprNotifications(object):
         """Return status of timekpr connection (nothing else, just timekpr itself)"""
         return self._dbusConnections[self.CL_CONN_TK][self.CL_IF] is not None
 
-    def _prepareNotification(
-        self, pMsgCode, pMsgType, pPriority, pTimeLeft=None, pAdditionalMessage=None
-    ):
+    def _prepareNotification(self, pMsgCode, pMsgType, pPriority, pTimeLeft=None, pAdditionalMessage=None):
         """Prepare the message to be sent to dbus notifications"""
         log.log(cons.TK_LOG_LEVEL_DEBUG, "start prepareNotification")
 
         # determine icon to use
-        timekprIcon = cons.TK_PRIO_CONF[cons.getNotificationPrioriy(pPriority)][
-            cons.TK_ICON_NOTIF
-        ]
-        timekprPrio = cons.TK_PRIO_CONF[cons.getNotificationPrioriy(pPriority)][
-            cons.TK_DBUS_PRIO
-        ]
+        timekprIcon = cons.TK_PRIO_CONF[cons.getNotificationPrioriy(pPriority)][cons.TK_ICON_NOTIF]
+        timekprPrio = cons.TK_PRIO_CONF[cons.getNotificationPrioriy(pPriority)][cons.TK_DBUS_PRIO]
 
         # calculate hours in advance
         if pTimeLeft is not None:
-            timeLeftHours = (
-                pTimeLeft - cons.TK_DATETIME_START
-            ).days * 24 + pTimeLeft.hour
+            timeLeftHours = (pTimeLeft - cons.TK_DATETIME_START).days * 24 + pTimeLeft.hour
 
         # determine the message to pass
         if pMsgCode == cons.TK_MSG_CODE_TIMEUNLIMITED:
@@ -517,12 +466,8 @@ class timekprNotifications(object):
             # msg
             msgStr = " ".join(
                 (
-                    msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_TIME_LEFT_1", timeLeftHours
-                    ),
-                    msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_TIME_LEFT_2", pTimeLeft.minute
-                    ),
+                    msg.getTranslation("TK_MSG_NOTIFICATION_TIME_LEFT_1", timeLeftHours),
+                    msg.getTranslation("TK_MSG_NOTIFICATION_TIME_LEFT_2", pTimeLeft.minute),
                     msg.getTranslation(
                         (
                             "TK_MSG_NOTIFICATION_PLAYTIME_LEFT_3"
@@ -547,9 +492,7 @@ class timekprNotifications(object):
             msgStr = " ".join(
                 (
                     msg.getTranslation(msgCode),
-                    msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_TIME_IS_UP_2", pTimeLeft.second
-                    ),
+                    msg.getTranslation("TK_MSG_NOTIFICATION_TIME_IS_UP_2", pTimeLeft.second),
                 )
             )
         elif pMsgCode == cons.TK_MSG_CODE_TIMELEFTCHANGED:
@@ -560,33 +503,23 @@ class timekprNotifications(object):
             msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CONFIGURATION_CHANGED")
         elif pMsgCode == cons.TK_MSG_CODE_REMOTE_COMMUNICATION_ERROR:
             # msg
-            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CANNOT_CONNECT") % (
-                pAdditionalMessage
-            )
+            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CANNOT_CONNECT") % (pAdditionalMessage)
         elif pMsgCode == cons.TK_MSG_CODE_REMOTE_INVOCATION_ERROR:
             # msg
-            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CANNOT_COMMUNICATE") % (
-                pAdditionalMessage
-            )
+            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CANNOT_COMMUNICATE") % (pAdditionalMessage)
         elif pMsgCode == cons.TK_MSG_CODE_ICON_INIT_ERROR:
             # msg
-            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CANNOT_INIT_ICON") % (
-                pAdditionalMessage
-            )
+            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_CANNOT_INIT_ICON") % (pAdditionalMessage)
         elif pMsgCode == cons.TK_MSG_CODE_FEATURE_SCR_NOT_AVAILABLE_ERROR:
             # msg
-            msgStr = msg.getTranslation(
-                "TK_MSG_NOTIFICATION_SCR_FEATURE_NOT_AVAILABLE"
-            ) % (pAdditionalMessage)
+            msgStr = msg.getTranslation("TK_MSG_NOTIFICATION_SCR_FEATURE_NOT_AVAILABLE") % (pAdditionalMessage)
 
         log.log(cons.TK_LOG_LEVEL_DEBUG, "finish prepareNotification")
 
         # pass this back
         return timekprIcon, msgStr, timekprPrio
 
-    def notifyUser(
-        self, pMsgCode, pMsgType, pPriority, pTimeLeft=None, pAdditionalMessage=None
-    ):
+    def notifyUser(self, pMsgCode, pMsgType, pPriority, pTimeLeft=None, pAdditionalMessage=None):
         """Notify the user."""
         # if we have dbus connection, let"s do so
         if self._dbusConnections[self.CL_CONN_NOTIF][self.CL_IF] is None:
@@ -609,9 +542,7 @@ class timekprNotifications(object):
             # notification params based on criticality
             if pPriority in (cons.TK_PRIO_CRITICAL, cons.TK_PRIO_IMPORTANT):
                 # timeout
-                notificationTimeout = (
-                    self._timekprClientConfig.getClientNotificationTimeoutCritical()
-                )
+                notificationTimeout = self._timekprClientConfig.getClientNotificationTimeoutCritical()
                 # sound
                 if (
                     self._timekprClientConfig.getIsNotificationSoundSupported()
@@ -624,9 +555,7 @@ class timekprNotifications(object):
                         hints["sound-file"] = cons.TK_CL_NOTIF_SND_FILE_CRITICAL
             else:
                 # timeout
-                notificationTimeout = (
-                    self._timekprClientConfig.getClientNotificationTimeout()
-                )
+                notificationTimeout = self._timekprClientConfig.getClientNotificationTimeout()
                 # sound
                 if (
                     self._timekprClientConfig.getIsNotificationSoundSupported()
@@ -663,9 +592,7 @@ class timekprNotifications(object):
                 self._lastNotifId = 0
 
             # calculate notification values
-            notificationTimeout = (
-                min(cons.TK_CL_NOTIF_MAX, max(0, notificationTimeout)) * 1000
-            )
+            notificationTimeout = min(cons.TK_CL_NOTIF_MAX, max(0, notificationTimeout)) * 1000
 
             # notification value of 0 means "forever"
             actions = ["OK", "OK"] if notificationTimeout == 0 else []
@@ -675,9 +602,7 @@ class timekprNotifications(object):
                 "preshow: %s, %s, %i"
                 % (
                     msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_PLAYTIME_TITLE"
-                        if pMsgType == "PlayTime"
-                        else "TK_MSG_NOTIFICATION_TITLE"
+                        "TK_MSG_NOTIFICATION_PLAYTIME_TITLE" if pMsgType == "PlayTime" else "TK_MSG_NOTIFICATION_TITLE"
                     ),
                     msgStr,
                     notificationTimeout,
@@ -691,16 +616,10 @@ class timekprNotifications(object):
                 # call dbus method
                 notifId = self._dbusConnections[self.CL_CONN_NOTIF][self.CL_IF].Notify(
                     "Timekpr",
-                    (
-                        self._lastPTNotifId
-                        if pMsgType == "PlayTime"
-                        else self._lastNotifId
-                    ),
+                    (self._lastPTNotifId if pMsgType == "PlayTime" else self._lastNotifId),
                     timekprIcon,
                     msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_PLAYTIME_TITLE"
-                        if pMsgType == "PlayTime"
-                        else "TK_MSG_NOTIFICATION_TITLE"
+                        "TK_MSG_NOTIFICATION_PLAYTIME_TITLE" if pMsgType == "PlayTime" else "TK_MSG_NOTIFICATION_TITLE"
                     ),
                     msgStr,
                     actions,
@@ -715,15 +634,13 @@ class timekprNotifications(object):
                     # logging
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        'ERROR (DBUS): "%s" in "%s.%s"'
-                        % (str(dbusEx), __name__, self.notifyUser.__name__),
+                        'ERROR (DBUS): "%s" in "%s.%s"' % (str(dbusEx), __name__, self.notifyUser.__name__),
                     )
                 else:
                     # logging
                     log.log(
                         cons.TK_LOG_LEVEL_INFO,
-                        'WARNING (DBUS): "%s" in "%s.%s"'
-                        % (str(dbusEx), __name__, self.notifyUser.__name__),
+                        'WARNING (DBUS): "%s" in "%s.%s"' % (str(dbusEx), __name__, self.notifyUser.__name__),
                     )
 
             # save notification ID (only if message is not about PlayTime, otherwise it may dismiss standard time or vice versa)
@@ -756,9 +673,7 @@ class timekprNotifications(object):
         # for screensaver status
         if pWhat == cons.TK_CTRL_SCR_N:
             # value
-            value = str(
-                bool(self._dbusConnections[self.CL_CONN_SCR][self.CL_IF].GetActive())
-            )
+            value = str(bool(self._dbusConnections[self.CL_CONN_SCR][self.CL_IF].GetActive()))
 
         # resend stuff to server
         self.processUserSessionAttributes(pWhat, pKey, value)
@@ -803,9 +718,7 @@ class timekprNotifications(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._dbusConnections[self.CL_CONN_TK][
-                    self.CL_IF
-                ].requestTimeLeft(self._userName)
+                result, message = self._dbusConnections[self.CL_CONN_TK][self.CL_IF].requestTimeLeft(self._userName)
 
                 # check call result
                 if result != 0:
@@ -822,8 +735,7 @@ class timekprNotifications(object):
                 # logging
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    'ERROR (DBUS): "%s" in "%s.%s"'
-                    % (str(dbusEx), __name__, self.requestTimeLeft.__name__),
+                    'ERROR (DBUS): "%s" in "%s.%s"' % (str(dbusEx), __name__, self.requestTimeLeft.__name__),
                 )
 
                 # show message to user as well
@@ -831,9 +743,7 @@ class timekprNotifications(object):
                     cons.TK_MSG_CODE_REMOTE_COMMUNICATION_ERROR,
                     None,
                     cons.TK_PRIO_CRITICAL,
-                    pAdditionalMessage=msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_CONNECTION_ERROR"
-                    ),
+                    pAdditionalMessage=msg.getTranslation("TK_MSG_NOTIFICATION_CONNECTION_ERROR"),
                 )
 
     def requestTimeLimits(self):
@@ -849,9 +759,7 @@ class timekprNotifications(object):
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._dbusConnections[self.CL_CONN_TK][
-                    self.CL_IF
-                ].requestTimeLimits(self._userName)
+                result, message = self._dbusConnections[self.CL_CONN_TK][self.CL_IF].requestTimeLimits(self._userName)
 
                 # check call result
                 if result != 0:
@@ -868,8 +776,7 @@ class timekprNotifications(object):
                 # logging
                 log.log(
                     cons.TK_LOG_LEVEL_INFO,
-                    'ERROR (DBUS): "%s" in "%s.%s"'
-                    % (str(dbusEx), __name__, self.requestTimeLimits.__name__),
+                    'ERROR (DBUS): "%s" in "%s.%s"' % (str(dbusEx), __name__, self.requestTimeLimits.__name__),
                 )
 
                 # show message to user as well
@@ -877,9 +784,7 @@ class timekprNotifications(object):
                     cons.TK_MSG_CODE_REMOTE_COMMUNICATION_ERROR,
                     None,
                     cons.TK_PRIO_CRITICAL,
-                    pAdditionalMessage=msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_CONNECTION_ERROR"
-                    ),
+                    pAdditionalMessage=msg.getTranslation("TK_MSG_NOTIFICATION_CONNECTION_ERROR"),
                 )
 
     def processUserSessionAttributes(self, pWhat, pKey=None, pValue=None):
@@ -893,15 +798,12 @@ class timekprNotifications(object):
         if self._dbusConnections[self.CL_CONN_TK][self.CL_IFA] is not None:
             log.log(
                 cons.TK_LOG_LEVEL_INFO,
-                "%s session attributes"
-                % ("requesting" if pKey is None else "verifying"),
+                "%s session attributes" % ("requesting" if pKey is None else "verifying"),
             )
             # notify through dbus
             try:
                 # call dbus method
-                result, message = self._dbusConnections[self.CL_CONN_TK][
-                    self.CL_IFA
-                ].processUserSessionAttributes(
+                result, message = self._dbusConnections[self.CL_CONN_TK][self.CL_IFA].processUserSessionAttributes(
                     self._userName,
                     dbus.String(pWhat if pWhat is not None else ""),
                     dbus.String(pKey if pKey is not None else ""),
@@ -938,7 +840,5 @@ class timekprNotifications(object):
                     cons.TK_MSG_CODE_REMOTE_COMMUNICATION_ERROR,
                     None,
                     cons.TK_PRIO_CRITICAL,
-                    pAdditionalMessage=msg.getTranslation(
-                        "TK_MSG_NOTIFICATION_CONNECTION_ERROR"
-                    ),
+                    pAdditionalMessage=msg.getTranslation("TK_MSG_NOTIFICATION_CONNECTION_ERROR"),
                 )

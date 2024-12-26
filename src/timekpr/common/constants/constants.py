@@ -50,9 +50,7 @@ TK_CL_NOTIF_MAX = 60
 TK_CL_NOTIF_TMO = 3
 TK_CL_NOTIF_CRIT_TMO = 10
 TK_CL_NOTIF_SND_TYPE = "sound-name"  # can be sound-name or sound-file
-TK_CL_NOTIF_SND_FILE_WARN = (
-    "/usr/share/sounds/freedesktop/stereo/dialog-information.oga"
-)
+TK_CL_NOTIF_SND_FILE_WARN = "/usr/share/sounds/freedesktop/stereo/dialog-information.oga"
 TK_CL_NOTIF_SND_FILE_CRITICAL = "/usr/share/sounds/freedesktop/stereo/dialog-error.oga"
 TK_CL_NOTIF_SND_NAME_WARNING = "bell-window-system"
 TK_CL_NOTIF_SND_NAME_IMPORTANT = "dialog-warning"
@@ -149,18 +147,14 @@ TK_CTRL_UID = "UID"  # user id
 TK_CTRL_UNAME = "UNAME"  # user name
 TK_CTRL_UPATH = "UPATH"  # user path on dbus
 TK_CTRL_FCNTD = "FCNTD"  # final countdown
-TK_CTRL_RESTY = (
-    "RESTY"  # restricton type: lock, suspend, suspendwake, terminate, shutdown
-)
+TK_CTRL_RESTY = "RESTY"  # restricton type: lock, suspend, suspendwake, terminate, shutdown
 TK_CTRL_RTDEL = "RTDEL"  # retry delay before next attempt to enforce restrictions
 TK_CTRL_RTDEA = "RTDEA"  # retry delay (additional delay for lock in case of suspend)
 TK_CTRL_USACT = "USACT"  # whether user is active
 TK_CTRL_USLCK = "USLCK"  # whether user screen is locked
 TK_CTRL_USWKU = "USWKU"  # wake up time for computer if one is specified
 TK_CTRL_LCDEL = 1  # lock cycle delay (how many ticks happen before repetitive lock)
-TK_CTRL_SCDEL = (
-    20  # suspend cycle delay (how many ticks happen before repetitive suspend)
-)
+TK_CTRL_SCDEL = 20  # suspend cycle delay (how many ticks happen before repetitive suspend)
 # restriction / lockout types
 TK_CTRL_RES_L = "lock"
 TK_CTRL_RES_S = "suspend"
@@ -293,9 +287,7 @@ TK_HIDE_TRAY_ICON = False
 # config
 TK_MAIN_CONFIG_FILE = "timekpr.conf"
 TK_USER_CONFIG_FILE = "timekpr.%s.conf"
-TK_UNAME_SRCH_LN_LMT = (
-    10  # this defines line count for verifying username in first n lines
-)
+TK_UNAME_SRCH_LN_LMT = 10  # this defines line count for verifying username in first n lines
 
 # ## timekpr notification config ##
 # priorites
@@ -375,14 +367,10 @@ TK_PRIO_CONF[TK_PRIO_UACC] = {
 
 # ## timekpr notification config ##
 # init python gettext
-gettext.bindtextdomain(
-    "timekpr", TK_LOCALIZATION_DIR if not TK_DEV_ACTIVE else TK_LOCALIZATION_DIR_DEV
-)
+gettext.bindtextdomain("timekpr", TK_LOCALIZATION_DIR if not TK_DEV_ACTIVE else TK_LOCALIZATION_DIR_DEV)
 gettext.textdomain("timekpr")
 # init actual libc gettext
-locale.bindtextdomain(
-    "timekpr", TK_LOCALIZATION_DIR if not TK_DEV_ACTIVE else TK_LOCALIZATION_DIR_DEV
-)
+locale.bindtextdomain("timekpr", TK_LOCALIZATION_DIR if not TK_DEV_ACTIVE else TK_LOCALIZATION_DIR_DEV)
 locale.textdomain("timekpr")
 
 # define admin commands
@@ -399,10 +387,8 @@ TK_ADMIN_COMMANDS = {
 }
 # define user admin commands
 TK_USER_ADMIN_COMMANDS = {
-    "--help": "%s:\n    %s"
-    % (msg.getTranslation("TK_MSG_USER_ADMIN_CMD_HELP"), "timekpra --help"),
-    "--userlist": "%s:\n    %s"
-    % (msg.getTranslation("TK_MSG_USER_ADMIN_CMD_USERLIST"), "timekpra --userlist"),
+    "--help": "%s:\n    %s" % (msg.getTranslation("TK_MSG_USER_ADMIN_CMD_HELP"), "timekpra --help"),
+    "--userlist": "%s:\n    %s" % (msg.getTranslation("TK_MSG_USER_ADMIN_CMD_USERLIST"), "timekpra --userlist"),
     "--userinfo": "%s:\n    %s"
     % (
         msg.getTranslation("TK_MSG_USER_ADMIN_CMD_USERCONFIG"),

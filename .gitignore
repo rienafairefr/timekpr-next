@@ -9,3 +9,4 @@ debian/timekpr-next*
 .debhelper
 debian/files
 dist/
+PKG_SOURCE

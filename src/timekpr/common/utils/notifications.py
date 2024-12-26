@@ -65,9 +65,7 @@ class timekprNotificationManager(dbus.service.Object):
         )
 
         # init DBUS
-        super().__init__(
-            pBusName, cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS
-        )
+        super().__init__(pBusName, cons.TK_DBUS_USER_NOTIF_PATH_PREFIX + self._userNameDBUS)
 
         log.log(cons.TK_LOG_LEVEL_INFO, "finish init notifications")
 
@@ -153,9 +151,7 @@ class timekprNotificationManager(dbus.service.Object):
             or (self._notificationLvl != self._prevNotificationLvl)
             or (
                 (effectiveDatetime - self._lastNotified).total_seconds()
-                >= self._notificationLimits[self._notificationLvl][
-                    cons.TK_NOTIF_INTERVAL
-                ]()
+                >= self._notificationLimits[self._notificationLvl][cons.TK_NOTIF_INTERVAL]()
                 and not pTimeValues[cons.TK_CTRL_UACC]
             )
         ):
@@ -243,9 +239,7 @@ class timekprNotificationManager(dbus.service.Object):
     def processEmergencyNotification(self, pFinalNotificationType, pCountdown):
         """Emergency notifcation call wrapper"""
         # forward to dbus
-        self.timeCriticalNotification(
-            pFinalNotificationType, cons.TK_PRIO_CRITICAL, pCountdown
-        )
+        self.timeCriticalNotification(pFinalNotificationType, cons.TK_PRIO_CRITICAL, pCountdown)
 
     def procesSessionAttributes(self, pWhat, pKey):
         """Session attribute verification wrapper"""
@@ -277,9 +271,7 @@ class timekprNotificationManager(dbus.service.Object):
     # --------------- DBUS / communication methods (notifications) --------------- #
 
     @dbus.service.signal(cons.TK_DBUS_USER_NOTIF_INTERFACE, signature="siii")
-    def timeLeftNotification(
-        self, pPriority, pTimeLeftTotal, pTimeLeftToday, pTimeLimitToday
-    ):
+    def timeLeftNotification(self, pPriority, pTimeLeftTotal, pTimeLeftToday, pTimeLimitToday):
         """Send out signal"""
         log.log(cons.TK_LOG_LEVEL_DEBUG, "sending tln: %i" % (pTimeLeftTotal))
         # You have %s to use continously, including %s ouf of %s today

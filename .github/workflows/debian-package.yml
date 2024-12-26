@@ -1,0 +1,33 @@
+name: Build Linux package
+
+on:
+  workflow_call:
+
+jobs:
+  Create_Packages:
+    name: Create Package
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: "REPO"
+
+      - name: Build DEB Package
+        run: |
+          sudo apt-get update
+          sudo apt-get install debhelper dh-python po-debconf gir1.2-gtk-3.0 dpkg-dev build-essential devscripts
+          # Copy script files around to stop .github from being added to the package then build the package
+          mkdir PKG_SOURCE
+          cp -Rf REPO/bin REPO/src REPO/debian REPO/resource PKG_SOURCE
+          cd PKG_SOURCE
+          export EMAIL=cheery.iron6016@fastmail.com
+          dpkg-buildpackage --unsigned-source --unsigned-changes --build=full
+          [ `find . -type f -name *.deb | wc -l` = "1" ] && echo "OK" || echo "KO"
+
+      - name: Archive package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian package
+          path: |
+            timekpr-next*.deb

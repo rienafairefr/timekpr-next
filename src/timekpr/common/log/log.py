@@ -31,11 +31,7 @@ def _getLogFileName(pWho, pUserName):
         else (
             cons.TK_LOG_FILE_ADMIN
             if pWho == cons.TK_LOG_OWNER_ADMIN
-            else (
-                cons.TK_LOG_FILE_ADMIN_SU
-                if pWho == cons.TK_LOG_OWNER_ADMIN_SU
-                else cons.TK_LOG_FILE
-            )
+            else (cons.TK_LOG_FILE_ADMIN_SU if pWho == cons.TK_LOG_OWNER_ADMIN_SU else cons.TK_LOG_FILE)
         )
     )
     # replace user in log file
