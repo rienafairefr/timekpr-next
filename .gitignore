@@ -10,3 +10,4 @@ debian/timekpr-next*
 debian/files
 dist/
 PKG_SOURCE
+.pybuild

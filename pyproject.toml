@@ -5,11 +5,21 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 license = "GPLv3"
 readme = "README.md"
-packages = [{include = "timekpr", from="src"}]
+packages = [{include = "timekpr", from="."}]
+include = [
+    { path ="resource", format=["sdist", "wheel"] }
+]
+
+[project.scripts]
+timekpra = "timekpr.client.timekpra:main"
+timekprc = "timekpr.client.timekprc:main"
+timekprd = "timekpr.server.timekprd:main"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 dbus-python = "^1.3.2"
+pygobject = "^3.50.0"
+psutil = "^6.1.1"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -17,6 +27,7 @@ black = "^24.10.0"
 pytest = "^8.3.4"
 flake8 = "^7.1.1"
 pre-commit = "^4.0.1"
+build = "^1.2.2.post1"
 
 [build-system]
 requires = ["poetry-core"]

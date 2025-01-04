@@ -1,6 +1,6 @@
 timekpr-next (0.6.0-1ubuntu1~ppa1) UNRELEASED; urgency=medium
 
-  * Python build system moved to Poetry and a 'src' folder
+  * Python build system moved to Poetry
   * lint, black
   * CI tests
 
