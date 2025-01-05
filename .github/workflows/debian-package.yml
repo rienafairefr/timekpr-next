@@ -19,8 +19,9 @@ jobs:
           sudo apt-get install debhelper dh-python po-debconf gir1.2-gtk-3.0 dpkg-dev build-essential devscripts
           # Copy script files around to stop .github from being added to the package then build the package
           mkdir PKG_SOURCE
-          cp -Rf REPO/bin REPO/src REPO/debian REPO/resource PKG_SOURCE
+          cp -Rf REPO/bin REPO/timekpr REPO/debian  REPO/README.md REPO/resource REPO/pyproject.toml REPO/poetry.lock PKG_SOURCE
           cd PKG_SOURCE
+          ls -al
           export EMAIL=cheery.iron6016@fastmail.com
           dpkg-buildpackage --unsigned-source --unsigned-changes --build=full
           [ `find . -type f -name *.deb | wc -l` = "1" ] && echo "OK" || echo "KO"
