@@ -1,7 +1,3 @@
-# binaries
-bin/timekpra usr/bin/
-bin/timekprc usr/bin/
-bin/timekprd usr/bin/
 
 # config files
 resource/server/dbus/timekpr.conf etc/dbus-1/system.d/
@@ -45,53 +41,53 @@ resource/client/forms/admin.glade usr/share/timekpr/client/forms/
 resource/client/forms/client.glade usr/share/timekpr/client/forms/
 
 # python common
-src/timekpr/common/constants/constants.py usr/lib/python3/dist-packages/timekpr/common/constants/
-src/timekpr/common/constants/__init__.py usr/lib/python3/dist-packages/timekpr/common/constants/
-src/timekpr/common/constants/messages.py usr/lib/python3/dist-packages/timekpr/common/constants/
-src/timekpr/common/log/__init__.py usr/lib/python3/dist-packages/timekpr/common/log/
-src/timekpr/common/log/log.py usr/lib/python3/dist-packages/timekpr/common/log/
-src/timekpr/common/utils/config.py usr/lib/python3/dist-packages/timekpr/common/utils/
-src/timekpr/common/utils/__init__.py usr/lib/python3/dist-packages/timekpr/common/utils/
-src/timekpr/common/utils/misc.py usr/lib/python3/dist-packages/timekpr/common/utils/
-src/timekpr/common/utils/notifications.py usr/lib/python3/dist-packages/timekpr/common/utils/
+timekpr/common/constants/constants.py usr/lib/python3/dist-packages/timekpr/common/constants/
+timekpr/common/constants/__init__.py usr/lib/python3/dist-packages/timekpr/common/constants/
+timekpr/common/constants/messages.py usr/lib/python3/dist-packages/timekpr/common/constants/
+timekpr/common/log/__init__.py usr/lib/python3/dist-packages/timekpr/common/log/
+timekpr/common/log/log.py usr/lib/python3/dist-packages/timekpr/common/log/
+timekpr/common/utils/config.py usr/lib/python3/dist-packages/timekpr/common/utils/
+timekpr/common/utils/__init__.py usr/lib/python3/dist-packages/timekpr/common/utils/
+timekpr/common/utils/misc.py usr/lib/python3/dist-packages/timekpr/common/utils/
+timekpr/common/utils/notifications.py usr/lib/python3/dist-packages/timekpr/common/utils/
 
 # python client
-src/timekpr/client/admin/adminprocessor.py usr/lib/python3/dist-packages/timekpr/client/admin/
-src/timekpr/client/gui/admingui.py usr/lib/python3/dist-packages/timekpr/client/gui/
-src/timekpr/client/gui/clientgui.py usr/lib/python3/dist-packages/timekpr/client/gui/
-src/timekpr/client/gui/__init__.py usr/lib/python3/dist-packages/timekpr/client/gui/
-src/timekpr/client/__init__.py usr/lib/python3/dist-packages/timekpr/client/
-src/timekpr/client/interface/dbus/administration.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
-src/timekpr/client/interface/dbus/daemon.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
-src/timekpr/client/interface/dbus/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
-src/timekpr/client/interface/dbus/notifications.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
-src/timekpr/client/interface/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/
-src/timekpr/client/interface/speech/espeak.py usr/lib/python3/dist-packages/timekpr/client/interface/speech/
-src/timekpr/client/interface/speech/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/speech/
-src/timekpr/client/interface/ui/appindicator.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
-src/timekpr/client/interface/ui/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
-src/timekpr/client/interface/ui/notificationarea.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
-src/timekpr/client/interface/ui/statusicon.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
-src/timekpr/client/timekpra.py usr/lib/python3/dist-packages/timekpr/client/
-src/timekpr/client/timekprc.py usr/lib/python3/dist-packages/timekpr/client/
+timekpr/client/admin/adminprocessor.py usr/lib/python3/dist-packages/timekpr/client/admin/
+timekpr/client/gui/admingui.py usr/lib/python3/dist-packages/timekpr/client/gui/
+timekpr/client/gui/clientgui.py usr/lib/python3/dist-packages/timekpr/client/gui/
+timekpr/client/gui/__init__.py usr/lib/python3/dist-packages/timekpr/client/gui/
+timekpr/client/__init__.py usr/lib/python3/dist-packages/timekpr/client/
+timekpr/client/interface/dbus/administration.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
+timekpr/client/interface/dbus/daemon.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
+timekpr/client/interface/dbus/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
+timekpr/client/interface/dbus/notifications.py usr/lib/python3/dist-packages/timekpr/client/interface/dbus/
+timekpr/client/interface/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/
+timekpr/client/interface/speech/espeak.py usr/lib/python3/dist-packages/timekpr/client/interface/speech/
+timekpr/client/interface/speech/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/speech/
+timekpr/client/interface/ui/appindicator.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
+timekpr/client/interface/ui/__init__.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
+timekpr/client/interface/ui/notificationarea.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
+timekpr/client/interface/ui/statusicon.py usr/lib/python3/dist-packages/timekpr/client/interface/ui/
+timekpr/client/timekpra.py usr/lib/python3/dist-packages/timekpr/client/
+timekpr/client/timekprc.py usr/lib/python3/dist-packages/timekpr/client/
 
 # python server
-src/timekpr/server/config/configprocessor.py usr/lib/python3/dist-packages/timekpr/server/config/
-src/timekpr/server/config/userhelper.py usr/lib/python3/dist-packages/timekpr/server/config/
-src/timekpr/server/__init__.py usr/lib/python3/dist-packages/timekpr/server/
-src/timekpr/server/interface/dbus/consolekit/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/consolekit/
-src/timekpr/server/interface/dbus/consolekit/manager.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/consolekit/
-src/timekpr/server/interface/dbus/consolekit/user.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/consolekit/
-src/timekpr/server/interface/dbus/daemon.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/
-src/timekpr/server/interface/dbus/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/
-src/timekpr/server/interface/dbus/logind/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/logind/
-src/timekpr/server/interface/dbus/logind/manager.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/logind/
-src/timekpr/server/interface/dbus/logind/user.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/logind/
-src/timekpr/server/interface/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/
-src/timekpr/server/timekprd.py usr/lib/python3/dist-packages/timekpr/server/
-src/timekpr/server/user/playtime.py usr/lib/python3/dist-packages/timekpr/server/user/
-src/timekpr/server/user/__init__.py usr/lib/python3/dist-packages/timekpr/server/user/
-src/timekpr/server/user/userdata.py usr/lib/python3/dist-packages/timekpr/server/user/
+timekpr/server/config/configprocessor.py usr/lib/python3/dist-packages/timekpr/server/config/
+timekpr/server/config/userhelper.py usr/lib/python3/dist-packages/timekpr/server/config/
+timekpr/server/__init__.py usr/lib/python3/dist-packages/timekpr/server/
+timekpr/server/interface/dbus/consolekit/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/consolekit/
+timekpr/server/interface/dbus/consolekit/manager.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/consolekit/
+timekpr/server/interface/dbus/consolekit/user.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/consolekit/
+timekpr/server/interface/dbus/daemon.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/
+timekpr/server/interface/dbus/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/
+timekpr/server/interface/dbus/logind/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/logind/
+timekpr/server/interface/dbus/logind/manager.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/logind/
+timekpr/server/interface/dbus/logind/user.py usr/lib/python3/dist-packages/timekpr/server/interface/dbus/logind/
+timekpr/server/interface/__init__.py usr/lib/python3/dist-packages/timekpr/server/interface/
+timekpr/server/timekprd.py usr/lib/python3/dist-packages/timekpr/server/
+timekpr/server/user/playtime.py usr/lib/python3/dist-packages/timekpr/server/user/
+timekpr/server/user/__init__.py usr/lib/python3/dist-packages/timekpr/server/user/
+timekpr/server/user/userdata.py usr/lib/python3/dist-packages/timekpr/server/user/
 
 # translations (only the ones that are ready will be included)
 resource/locale/be/LC_MESSAGES/timekpr.mo usr/share/locale/be/LC_MESSAGES/
