@@ -16,7 +16,7 @@ from datetime import datetime
 # ## constants ##
 # version (in case config is corrupt or smth like that)
 TK_VERSION = "0.5.8"
-TK_DEV_ACTIVE = False  # change this accordingly when running in DEV or PROD
+TK_DEV_ACTIVE = True  # change this accordingly when running in DEV or PROD
 TK_DEV_BUS = "ses"  # this sets up which bus to use for development (sys or ses)
 TK_DEV_SUPPORT_PAGE = "https://tinyurl.com/yc9x85v2"
 
@@ -85,17 +85,17 @@ TK_LOCALIZATION_DIR = "/usr/share/locale"
 
 # ## development ##
 # main config file
-TK_MAIN_CONFIG_DIR_DEV = "../resource/server"
+TK_MAIN_CONFIG_DIR_DEV = "../../resource/server"
 # runtime directory for timekpr user configuration files
 TK_CONFIG_DIR_DEV = "../../runtime.tmp"
 # runtime directory for timekpr time control files
 TK_WORK_DIR_DEV = "../../runtime.tmp"
 # directory for shared files (images, gui definitions, etc.)
-TK_SHARED_DIR_DEV = "../resource"
+TK_SHARED_DIR_DEV = "../../resource"
 # directory for log files
 TK_LOGFILE_DIR_DEV = "../../runtime.tmp"
 # localization
-TK_LOCALIZATION_DIR_DEV = "../resource/locale"
+TK_LOCALIZATION_DIR_DEV = "../../resource/locale"
 
 # retry cnt for various actions
 TK_MAX_RETRIES = 5
@@ -124,10 +124,14 @@ TK_DBUS_SESSION_OBJECT = "org.freedesktop.login1.Session"
 # path / objects / interfaces
 TK_DBUS_BUS_NAME = "com.timekpr.server"
 TK_DBUS_SERVER_PATH = "/com/timekpr/server"
+TK_DBUS_SERVER_USER_ADMIN_PATH = "/com/timekpr/server/user/admin"
+TK_DBUS_SERVER_ADMIN_PATH = "/com/timekpr/server/admin"
+TK_DBUS_SERVER_USER_PATH = "/com/timekpr/server/user"
 TK_DBUS_ADMIN_INTERFACE = "com.timekpr.server.admin"
 TK_DBUS_USER_NOTIF_PATH_PREFIX = "/com/timekpr/server/user/"
 TK_DBUS_USER_NOTIF_INTERFACE = "com.timekpr.server.user.notifications"
 TK_DBUS_USER_LIMITS_INTERFACE = "com.timekpr.server.user.limits"
+TK_DBUS_USER_INTERFACE = "com.timekpr.server.user"
 TK_DBUS_USER_SESSION_ATTRIBUTE_INTERFACE = "com.timekpr.server.user.sessionattributes"
 TK_DBUS_USER_ADMIN_INTERFACE = "com.timekpr.server.user.admin"
 
@@ -136,7 +140,8 @@ TK_CTRL_SCR_N = "scrs"
 TK_CTRL_SCR_K = "scrs:key"
 TK_CTRL_SCR_R = "scrs:retr"
 
-# WORKAROUNDS section for use in Gnome and similar (almost everyone makes their own screensaver dbus interface these days, KDE (of the biggest players) is not)
+# WORKAROUNDS section for use in Gnome and similar (almost everyone makes their
+# own screensaver dbus interface these days, KDE (of the biggest players) is not)
 TK_SCR_XDGCD_OVERRIDE = [["unity", "gnome"], ["kde", "freedesktop"]]
 
 # DBUS performance measurement
@@ -152,7 +157,7 @@ TK_CTRL_RTDEL = "RTDEL"  # retry delay before next attempt to enforce restrictio
 TK_CTRL_RTDEA = "RTDEA"  # retry delay (additional delay for lock in case of suspend)
 TK_CTRL_USACT = "USACT"  # whether user is active
 TK_CTRL_USLCK = "USLCK"  # whether user screen is locked
-TK_CTRL_USWKU = "USWKU"  # wake up time for computer if one is specified
+TK_CTRL_USWKU = "USWKU"  # wakeup time for computer if one is specified
 TK_CTRL_LCDEL = 1  # lock cycle delay (how many ticks happen before repetitive lock)
 TK_CTRL_SCDEL = 20  # suspend cycle delay (how many ticks happen before repetitive suspend)
 # restriction / lockout types

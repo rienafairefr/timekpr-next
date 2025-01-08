@@ -102,56 +102,56 @@ def measureDBUSTimeElapsed(pStart=False, pStop=False, pPrintToConsole=False, pDb
     return result
 
 
-def checkAndSetRunning(pAppName, pUserName=""):
+def checkAndSetRunning(app_name, user_name=""):
     """Check whether application is already running"""
     # set up pidfile name
-    pidFile = os.path.join(
+    pid_file = os.path.join(
         cons.TK_LOG_TEMP_DIR,
         "%s.%s"
         % (
-            (pAppName if pUserName == "" else "%s.%s" % (pAppName, pUserName)),
+            (app_name if user_name == "" else "%s.%s" % (app_name, user_name)),
             cons.TK_LOG_PID_EXT,
         ),
     )
-    processPid = "0"
-    processCmd = ""
-    isAlreadyRunning = False
+    process_pid = "0"
+    process_cmd = ""
+    is_already_running = False
 
     # check if we have pid file for the app
-    if os.path.isfile(pidFile):
+    if os.path.isfile(pid_file):
         # if we have a file, we read the pid from there
-        with open(pidFile, "r") as pidfile:
-            processPid = pidfile.readline().rstrip("\n").rstrip("\r")
+        with open(pid_file, "r") as pidfile:
+            process_pid = pidfile.readline().rstrip("\n").rstrip("\r")
 
     # so we have a running app, now we check whether its our app
-    if processPid != "0":
+    if process_pid != "0":
         # get process commandline
-        procPidFile = os.path.join("/proc", processPid, "cmdline")
+        proc_pid_file = os.path.join("/proc", process_pid, "cmdline")
 
         # check whether we have a process running with this pid
-        if os.path.isfile(procPidFile):
+        if os.path.isfile(proc_pid_file):
             # we wrap this with try in case pid is very short-lived
             try:
-                with open(procPidFile, "r") as pidfile:
-                    processCmd = pidfile.readline()
+                with open(proc_pid_file, "r") as pidfile:
+                    process_cmd = pidfile.readline()
             except Exception:
-                processCmd = ""
+                process_cmd = ""
 
     # check if this is our process
-    if pAppName in processCmd:
+    if app_name in process_cmd:
         # we are running
-        isAlreadyRunning = True
+        is_already_running = True
         # print this to console as well
         print(
-            'Timekpr-nExT "%s" is already running for user "%s"' % (pAppName, pUserName if pUserName != "" else "ŗoot")
+            'Timekpr-nExT "%s" is already running for user "%s"' % (app_name, user_name if user_name != "" else "ŗoot")
         )
     else:
         # set our pid
-        with open(pidFile, "w") as pidfile:
-            processCmd = pidfile.write(str(os.getpid()))
+        with open(pid_file, "w") as pidfile:
+            process_cmd = pidfile.write(str(os.getpid()))
 
     # return whether we are running
-    return isAlreadyRunning
+    return is_already_running
 
 
 def killLeftoverUserProcesses(pUserName, pTimekprConfig):

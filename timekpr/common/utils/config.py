@@ -375,6 +375,28 @@ class timekprConfig(object):
             pOverallSuccess=resultValue,
         )
 
+        # global remote config section
+        section = "REMOTE"
+
+        param = "TIMEKPR_REMOTE_HOST"
+        resultValue, self._timekprConfig[param] = _readAndNormalizeValue(
+            self._timekprConfigParser.get,
+            section,
+            param,
+            pDefaultValue=None,
+            pCheckValue=None,
+            pOverallSuccess=resultValue,
+        )
+        param = "TIMEKPR_REMOTE_ACCESS_TOKEN"
+        resultValue, self._timekprConfig[param] = _readAndNormalizeValue(
+            self._timekprConfigParser.get,
+            section,
+            param,
+            pDefaultValue=None,
+            pCheckValue=None,
+            pOverallSuccess=resultValue,
+        )
+
         # if we could not read some values, save what we could + defaults
         if not resultValue:
             # logging

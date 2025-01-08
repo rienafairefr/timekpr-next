@@ -24,6 +24,7 @@ class timekprAdminConnector(object):
 
     def __init__(self):
         """Initialize stuff for connecting to timekpr server"""
+        print("new timekprAdminConnector")
         # times
         self._retryTimeoutSecs = 3
         self._retryCountLeft = 5
@@ -35,10 +36,10 @@ class timekprAdminConnector(object):
         self._timekprUserAdminDbusInterface = None
         self._timekprAdminDbusInterface = None
 
-    def initTimekprConnection(self, pTryOnce, pRescheduleConnection=False):
+    def initTimekprConnection(self, try_once, reschedule_connection=False):
         """Init dbus (connect to timekpr for info)"""
         # reschedule
-        if pRescheduleConnection:
+        if reschedule_connection:
             # rescheduling means dropping existing state and try again
             self._timekprObject = None
             self._timekprUserAdminDbusInterface = None
@@ -106,7 +107,7 @@ class timekprAdminConnector(object):
 
         # if either of this fails, we keep trying to connect
         if self._timekprUserAdminDbusInterface is None or self._timekprAdminDbusInterface is None:
-            if self._retryCountLeft > 0 and not pTryOnce:
+            if self._retryCountLeft > 0 and not try_once:
                 log.consoleOut(
                     "connection failed, %i attempts left, will retry in %i seconds"
                     % (self._retryCountLeft, self._retryTimeoutSecs)
@@ -114,7 +115,7 @@ class timekprAdminConnector(object):
                 self._retryCountLeft -= 1
 
                 # if either of this fails, we keep trying to connect
-                GLib.timeout_add_seconds(3, self.initTimekprConnection, pTryOnce)
+                GLib.timeout_add_seconds(3, self.initTimekprConnection, try_once)
             else:
                 # failed
                 self._initFailed = True

@@ -35,8 +35,7 @@ from timekpr.common.utils import misc
 from timekpr.server.config.userhelper import timekprUserStore
 
 
-# main start
-if __name__ == "__main__":
+def main():
     # simple self-running check
     if misc.checkAndSetRunning(os.path.splitext(os.path.basename(__file__))[0]):
         # get out
@@ -55,8 +54,8 @@ if __name__ == "__main__":
             cons.TK_LOG_LEVEL_INFO,
             "distribution: %s, %s, %s" % (distro.id(), distro.name(), distro.version()),
         )
-    log.log(cons.TK_LOG_LEVEL_INFO, "using python: %s" % (sys.version))
-    log.log(cons.TK_LOG_LEVEL_INFO, "dbus python: %s" % (dbus.__version__))
+    log.log(cons.TK_LOG_LEVEL_INFO, "using python: %s" % sys.version)
+    log.log(cons.TK_LOG_LEVEL_INFO, "dbus python: %s" % dbus.__version__)
     log.log(cons.TK_LOG_LEVEL_INFO, "---")
 
     # get daemon class
@@ -74,3 +73,7 @@ if __name__ == "__main__":
 
     # start daemon threads
     _timekprDaemon.startTimekprDaemon()
+
+
+if __name__ == "__main__":
+    main()

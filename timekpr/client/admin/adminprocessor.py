@@ -9,10 +9,12 @@ import os
 import getpass
 from os import geteuid
 
+
 # timekpr imports
 from timekpr.common.constants import constants as cons
 from timekpr.common.log import log
 from timekpr.client.interface.dbus.administration import timekprAdminConnector
+from timekpr.client.interface.remote.administration import timekprRemoteAdminConnector
 from timekpr.common.utils.config import timekprConfig
 from timekpr.common.constants import messages as msg
 from timekpr.common.utils.misc import findHourStartEndMinutes as findHourStartEndMinutes
@@ -26,10 +28,14 @@ class timekprAdminClient(object):
 
     # --------------- initialization / control methods --------------- #
 
-    def __init__(self):
+    def __init__(self, remote=False):
         """Initialize admin client"""
         # get our connector
-        self._timekprAdminConnector = timekprAdminConnector()
+        if remote:
+            self._timekprAdminConnector = timekprRemoteAdminConnector()
+        else:
+            self._timekprAdminConnector = timekprAdminConnector()
+        self.remote = remote
 
         # main object for GUI
         self._adminGUI = None
@@ -37,8 +43,8 @@ class timekprAdminClient(object):
     def startTimekprAdminClient(self, *args):
         """Start up timekpr admin (choose gui or cli and start this up)"""
         # check whether we need CLI or GUI
-        lastParam = args[len(args) - 1]
-        timekprForceCLI = False
+        last_param = args[len(args) - 1]
+        timekpr_force_cli = False
 
         # configuration init
         _timekprConfig = timekprConfig()
@@ -54,21 +60,23 @@ class timekprAdminClient(object):
         )
 
         # check for script
-        if "/timekpra" in lastParam or "timekpra.py" in lastParam:
+        if "/timekpra" in last_param or "timekpra.py" in last_param:
             # whether we have X running or wayland?
-            timekprX11Available = os.getenv("DISPLAY") is not None
-            timekprWaylandAvailable = os.getenv("WAYLAND_DISPLAY") is not None
-            timekprMirAvailable = os.getenv("MIR_SOCKET") is not None
+            timekpr_x11_available = os.getenv("DISPLAY") is not None
+            timekpr_wayland_available = os.getenv("WAYLAND_DISPLAY") is not None
+            timekpr_mir_available = os.getenv("MIR_SOCKET") is not None
 
             # if we are required to run graphical thing
-            if timekprX11Available or timekprWaylandAvailable or timekprMirAvailable:
+            if timekpr_x11_available or timekpr_wayland_available or timekpr_mir_available:
                 # resource dir
                 _resourcePathGUI = os.path.join(_timekprConfig.getTimekprSharedDir(), "client/forms")
                 # use GUI
                 from timekpr.client.gui.admingui import timekprAdminGUI
 
                 # load GUI and process from there
-                self._adminGUI = timekprAdminGUI(cons.TK_VERSION, _resourcePathGUI, getpass.getuser())
+                self._adminGUI = timekprAdminGUI(
+                    cons.TK_VERSION, _resourcePathGUI, getpass.getuser(), remote=self.remote
+                )
                 # start GUI
                 self._adminGUI.startAdminGUI()
             # nor X nor wayland are available
@@ -76,15 +84,15 @@ class timekprAdminClient(object):
                 # print to console
                 log.consoleOut("%s\n" % (msg.getTranslation("TK_MSG_CONSOLE_GUI_NOT_AVAILABLE")))
                 # forced CLI"
-                timekprForceCLI = True
+                timekpr_force_cli = True
         else:
             # CLI
-            timekprForceCLI = True
+            timekpr_force_cli = True
 
         # for CLI connections
-        if timekprForceCLI:
+        if timekpr_force_cli:
             # connect
-            self._timekprAdminConnector.initTimekprConnection(True)
+            self._timekprAdminConnector.initTimekprConnection(True, _timekprConfig)
             # connected?
             if self._timekprAdminConnector.isConnected()[1]:
                 # use CLI
@@ -105,33 +113,33 @@ class timekprAdminClient(object):
     def checkAndExecuteAdminCommands(self, *args):
         """Init connection to timekpr dbus server"""
         # initial param len
-        paramIdx = 0
-        paramLen = len(args)
-        adminCmdIncorrect = False
-        tmpIdx = 0
+        param_idx = 0
+        param_len = len(args)
+        admin_cmd_incorrect = False
+        tmp_idx = 0
 
         # determine parameter offset
         for rArg in args:
             # count offset
-            tmpIdx += 1
+            tmp_idx += 1
             # check for script
             if "/timekpra" in rArg or "timekpra.py" in rArg:
-                paramIdx = tmpIdx
+                param_idx = tmp_idx
 
         # this gets the command itself (args[0] is the script name)
-        adminCmd = args[paramIdx] if paramLen > paramIdx else "timekpra"
+        admin_cmd = args[param_idx] if param_len > param_idx else "timekpra"
 
         # now based on params check them out
         # this gets saved user list from the server
-        if adminCmd == "--help":
+        if admin_cmd == "--help":
             # fine
             pass
         # this gets saved user list from the server
-        elif adminCmd == "--userlist":
+        elif admin_cmd == "--userlist":
             # check param len
-            if paramLen != paramIdx + 1:
+            if param_len != param_idx + 1:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # get list
                 result, message, userList = self._timekprAdminConnector.getUserList()
@@ -144,199 +152,199 @@ class timekprAdminClient(object):
                     # log error
                     log.consoleOut(message)
         # this gets user configuration from the server
-        elif adminCmd == "--userinfo":
+        elif admin_cmd == "--userinfo":
             # check param len
-            if paramLen != paramIdx + 2:
+            if param_len != param_idx + 2:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # get user config
                 result, message, userConfig = self._timekprAdminConnector.getUserConfigurationAndInformation(
-                    args[paramIdx + 1], cons.TK_CL_INF_FULL
+                    args[param_idx + 1], cons.TK_CL_INF_FULL
                 )
 
                 # process
                 if result == 0:
                     # process
-                    self.printUserConfig(args[paramIdx + 1], userConfig)
+                    self.printUserConfig(args[param_idx + 1], userConfig)
                 else:
                     # log error
                     log.consoleOut(message)
         # this gets user configuration from the server
-        elif adminCmd == "--userinfort":
+        elif admin_cmd == "--userinfort":
             # check param len
-            if paramLen != paramIdx + 2:
+            if param_len != param_idx + 2:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # get user config
                 result, message, userConfig = self._timekprAdminConnector.getUserConfigurationAndInformation(
-                    args[paramIdx + 1], cons.TK_CL_INF_RT
+                    args[param_idx + 1], cons.TK_CL_INF_RT
                 )
 
                 # process
                 if result == 0:
                     # process
-                    self.printUserConfig(args[paramIdx + 1], userConfig)
+                    self.printUserConfig(args[param_idx + 1], userConfig)
                 else:
                     # log error
                     log.consoleOut(message)
         # this sets allowed days for the user
-        elif adminCmd == "--setalloweddays":
+        elif admin_cmd == "--setalloweddays":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetAllowedDays(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetAllowedDays(args[param_idx + 1], args[param_idx + 2])
         # this sets allowed hours per specified day or ALL for every day
-        elif adminCmd == "--setallowedhours":
+        elif admin_cmd == "--setallowedhours":
             # check param len
-            if paramLen != paramIdx + 4:
+            if param_len != param_idx + 4:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetAllowedHours(args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3])
+                self.processSetAllowedHours(args[param_idx + 1], args[param_idx + 2], args[param_idx + 3])
         # this sets time limits per allowed days
-        elif adminCmd == "--settimelimits":
+        elif admin_cmd == "--settimelimits":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetTimeLimits(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetTimeLimits(args[param_idx + 1], args[param_idx + 2])
         # this sets time limits per week
-        elif adminCmd == "--settimelimitweek":
+        elif admin_cmd == "--settimelimitweek":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetTimeLimitWeek(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetTimeLimitWeek(args[param_idx + 1], args[param_idx + 2])
         # this sets time limits per month
-        elif adminCmd == "--settimelimitmonth":
+        elif admin_cmd == "--settimelimitmonth":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetTimeLimitMonth(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetTimeLimitMonth(args[param_idx + 1], args[param_idx + 2])
         # this sets whether to track inactive user sessions
-        elif adminCmd == "--settrackinactive":
+        elif admin_cmd == "--settrackinactive":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetTrackInactive(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetTrackInactive(args[param_idx + 1], args[param_idx + 2])
         # this sets whether to show tray icon
-        elif adminCmd == "--sethidetrayicon":
+        elif admin_cmd == "--sethidetrayicon":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetHideTrayIcon(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetHideTrayIcon(args[param_idx + 1], args[param_idx + 2])
         # this sets lockout type for the user
-        elif adminCmd == "--setlockouttype":
+        elif admin_cmd == "--setlockouttype":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetLockoutType(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetLockoutType(args[param_idx + 1], args[param_idx + 2])
         # this sets whether PlayTime is enabled for user
-        elif adminCmd == "--setplaytimeenabled":
+        elif admin_cmd == "--setplaytimeenabled":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeEnabled(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetPlayTimeEnabled(args[param_idx + 1], args[param_idx + 2])
         # this sets playtime override for user
-        elif adminCmd == "--setplaytimelimitoverride":
+        elif admin_cmd == "--setplaytimelimitoverride":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeLimitOverride(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetPlayTimeLimitOverride(args[param_idx + 1], args[param_idx + 2])
         # this sets playtime allowed during unaccounted intervals for user
-        elif adminCmd == "--setplaytimeunaccountedintervalsflag":
+        elif admin_cmd == "--setplaytimeunaccountedintervalsflag":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeUnaccountedIntervalsEnabled(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetPlayTimeUnaccountedIntervalsEnabled(args[param_idx + 1], args[param_idx + 2])
         # this sets allowed days for PlayTime for the user
-        elif adminCmd == "--setplaytimealloweddays":
+        elif admin_cmd == "--setplaytimealloweddays":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeAllowedDays(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetPlayTimeAllowedDays(args[param_idx + 1], args[param_idx + 2])
         # this sets PlayTime limits for allowed days for the user
-        elif adminCmd == "--setplaytimelimits":
+        elif admin_cmd == "--setplaytimelimits":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeLimits(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetPlayTimeLimits(args[param_idx + 1], args[param_idx + 2])
         # this sets PlayTime activities for the user
-        elif adminCmd == "--setplaytimeactivities":
+        elif admin_cmd == "--setplaytimeactivities":
             # check param len
-            if paramLen != paramIdx + 3:
+            if param_len != param_idx + 3:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeActivities(args[paramIdx + 1], args[paramIdx + 2])
+                self.processSetPlayTimeActivities(args[param_idx + 1], args[param_idx + 2])
         # this sets time left for the user at current moment
-        elif adminCmd == "--settimeleft":
+        elif admin_cmd == "--settimeleft":
             # check param len
-            if paramLen != paramIdx + 4:
+            if param_len != param_idx + 4:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetTimeLeft(args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3])
+                self.processSetTimeLeft(args[param_idx + 1], args[param_idx + 2], args[param_idx + 3])
         # this sets time left for the user at current moment
-        elif adminCmd == "--setplaytimeleft":
+        elif admin_cmd == "--setplaytimeleft":
             # check param len
-            if paramLen != paramIdx + 4:
+            if param_len != param_idx + 4:
                 # fail
-                adminCmdIncorrect = True
+                admin_cmd_incorrect = True
             else:
                 # set days
-                self.processSetPlayTimeLeft(args[paramIdx + 1], args[paramIdx + 2], args[paramIdx + 3])
+                self.processSetPlayTimeLeft(args[param_idx + 1], args[param_idx + 2], args[param_idx + 3])
         else:
             # out
-            adminCmdIncorrect = True
+            admin_cmd_incorrect = True
 
         # check whether command is supported
         if (
-            (adminCmd not in cons.TK_USER_ADMIN_COMMANDS and adminCmd not in cons.TK_ADMIN_COMMANDS)
-            or adminCmd == "--help"
-            or adminCmdIncorrect
+            (admin_cmd not in cons.TK_USER_ADMIN_COMMANDS and admin_cmd not in cons.TK_ADMIN_COMMANDS)
+            or admin_cmd == "--help"
+            or admin_cmd_incorrect
         ):
             # fail
-            if adminCmdIncorrect:
+            if admin_cmd_incorrect:
                 log.consoleOut(msg.getTranslation("TK_MSG_CONSOLE_COMMAND_INCORRECT"), *args, "\n")
 
             # log notice
@@ -462,7 +470,7 @@ class timekprAdminClient(object):
     def processSetAllowedHours(self, pUserName, pDayNumber, pHourList):
         """Process allowed hours"""
         # this is the dict for hour config
-        allowedHours = {}
+        allowed_hours = {}
         result = 0
 
         # allowed hours
@@ -476,7 +484,7 @@ class timekprAdminClient(object):
                     # raise
                     raise ValueError("this does not compute")
                 # set hours
-                allowedHours[str(hour)] = {
+                allowed_hours[str(hour)] = {
                     cons.TK_CTRL_SMIN: sMin,
                     cons.TK_CTRL_EMIN: eMin,
                     cons.TK_CTRL_UACC: uacc,
@@ -489,7 +497,7 @@ class timekprAdminClient(object):
         # preprocess successful
         if result == 0:
             # invoke
-            result, message = self._timekprAdminConnector.setAllowedHours(pUserName, pDayNumber, allowedHours)
+            result, message = self._timekprAdminConnector.setAllowedHours(pUserName, pDayNumber, allowed_hours)
 
         # process
         if result != 0:

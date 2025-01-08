@@ -22,7 +22,7 @@ from timekpr.common.utils.config import timekprUserControl
 class timekprUser(object):
     """Contains all the data for timekpr user"""
 
-    def __init__(self, pBusName, pUserId, pUserName, pUserPath, pTimekprConfig, pPlayTimeConfig):
+    def __init__(self, bus_name, user_id, user_name, user_path, timekpr_config, play_time_config):
         """Initialize all stuff for user"""
 
         log.log(cons.TK_LOG_LEVEL_INFO, "start init timekprUser")
@@ -31,13 +31,13 @@ class timekprUser(object):
         self._timekprUserData = self._initUserLimits()
 
         # set user data
-        self._timekprUserData[cons.TK_CTRL_UID] = pUserId
-        self._timekprUserData[cons.TK_CTRL_UNAME] = pUserName
-        self._timekprUserData[cons.TK_CTRL_UPATH] = pUserPath
+        self._timekprUserData[cons.TK_CTRL_UID] = user_id
+        self._timekprUserData[cons.TK_CTRL_UNAME] = user_name
+        self._timekprUserData[cons.TK_CTRL_UPATH] = user_path
         # global server config
-        self._timekprConfig = pTimekprConfig
+        self._timekprConfig = timekpr_config
         # PlayTime option
-        self._timekprPlayTimeConfig = pPlayTimeConfig
+        self._timekprPlayTimeConfig = play_time_config
 
         # set up user properties
         self._timekprUserData[cons.TK_CTRL_SCR_N] = False  # is screensaver running
@@ -60,7 +60,7 @@ class timekprUser(object):
         )
         # user notification
         self._timekprUserNotification = timekprNotificationManager(
-            pBusName, self._timekprUserData[cons.TK_CTRL_UNAME], pTimekprConfig
+            bus_name, self._timekprUserData[cons.TK_CTRL_UNAME], timekpr_config
         )
 
         log.log(cons.TK_LOG_LEVEL_INFO, "finish init timekprUser")

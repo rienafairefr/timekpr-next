@@ -18,8 +18,8 @@ if "/usr/lib/python3/dist-packages" not in sys.path:
 from timekpr.client.interface.dbus.daemon import timekprClient
 from timekpr.common.utils import misc
 
-# main start
-if __name__ == "__main__":
+
+def main():
     # simple self-running check
     if misc.checkAndSetRunning(os.path.splitext(os.path.basename(__file__))[0], getpass.getuser()):
         # get out
@@ -34,3 +34,7 @@ if __name__ == "__main__":
 
     # start up timekpr client
     _timekprClient.startTimekprClient()
+
+
+if __name__ == "__main__":
+    main()

@@ -8,6 +8,8 @@ import gi
 import os
 import webbrowser
 
+from timekpr.client.interface.remote.administration import timekprRemoteAdminConnector
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -34,18 +36,19 @@ _DAY_HOUR_MIN_SEC_REGEXP = re.compile("^([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}):(
 class timekprAdminGUI(object):
     """Main class for supporting timekpr forms"""
 
-    def __init__(self, pTimekprVersion, pResourcePath, pUsername):
+    def __init__(self, timekpr_version, resource_path, username, remote=False):
         """Initialize gui"""
         # set up base variables
-        self._userName = pUsername
-        self._timekprVersion = pTimekprVersion
-        self._resourcePath = pResourcePath
+        self._userName = username
+        self._timekprVersion = timekpr_version
+        self._resourcePath = resource_path
         self._timekprAdminConnector = None
         self._isConnected = False
         self._ROWCOL_OK = "#FFFFFF"
         self._ROWSTYLE_OK = False
         self._ROWCOL_NOK = "Yellow"
         self._ROWSTYLE_NOK = True
+        self.remote = remote
 
         # ## forms builders ##
         # init config builder
@@ -113,7 +116,10 @@ class timekprAdminGUI(object):
     def initTimekprAdmin(self):
         """Initialize admin client"""
         # get our connector
-        self._timekprAdminConnector = timekprAdminConnector()
+        if self.remote:
+            self._timekprAdminConnector = timekprRemoteAdminConnector()
+        else:
+            self._timekprAdminConnector = timekprAdminConnector()
         # connect
         GLib.timeout_add_seconds(0, self._timekprAdminConnector.initTimekprConnection, False)
         # check connection
@@ -141,6 +147,8 @@ class timekprAdminGUI(object):
             if not self._isConnected:
                 # connected
                 self._isConnected = True
+                if self.remote:
+                    GLib.timeout_add_seconds(0, self.getHostsList)
                 # get users
                 GLib.timeout_add_seconds(0, self.getAdminUserList)
                 GLib.timeout_add_seconds(0.1, self.retrieveTimekprConfig)
@@ -1079,26 +1087,26 @@ class timekprAdminGUI(object):
     def getAdminUserList(self):
         """Get user list via dbus"""
         # store
-        userStore = self._timekprAdminFormBuilder.get_object("TimekprUserSelectionLS")
+        user_store = self._timekprAdminFormBuilder.get_object("TimekprUserSelectionLS")
         # clear up
-        userStore.clear()
-        userStore.append(["", ""])
+        user_store.clear()
+        user_store.append(["", ""])
         # def len
-        widthInChars = 15
+        width_in_chars = 15
 
         # get list
-        result, message, userList = self._timekprAdminConnector.getUserList()
+        result, message, user_list = self._timekprAdminConnector.getUserList()
 
         # all ok
         if result == 0:
             # loop and print
-            for rUser in userList:
+            for rUser in user_list:
                 # name
-                userName = "%s (%s)" % (rUser[0], rUser[1]) if (rUser[1] is not None and rUser[1] != "") else rUser[0]
+                user_name = "%s (%s)" % (rUser[0], rUser[1]) if (rUser[1] is not None and rUser[1] != "") else rUser[0]
                 # determine maxlen
-                widthInChars = max(widthInChars, len(userName) - 3)
+                width_in_chars = max(width_in_chars, len(user_name) - 3)
                 # add user
-                userStore.append([rUser[0], userName])
+                user_store.append([rUser[0], user_name])
             # status
             self.setTimekprStatus(False, "User list retrieved")
             # enable
@@ -1107,9 +1115,49 @@ class timekprAdminGUI(object):
                 self._timekprAdminFormBuilder.get_object("TimekprUserSelectionCB").get_sensitive()
             )
             # adjust widht
-            self._timekprAdminFormBuilder.get_object("TimekprUserSelectionCBEntry").set_width_chars(widthInChars)
+            self._timekprAdminFormBuilder.get_object("TimekprUserSelectionCBEntry").set_width_chars(width_in_chars)
             # init first selection
             self._timekprAdminFormBuilder.get_object("TimekprUserSelectionCB").set_active(0)
+        else:
+            # status
+            self.setTimekprStatus(False, message)
+            # check the connection
+            self.checkConnection()
+
+    def getHostsList(self):
+        """Get hosts list via relay"""
+        # store
+        host_store = self._timekprAdminFormBuilder.get_object("TimekprHostSelectionLS")
+        # clear up
+        host_store.clear()
+        host_store.append(["", ""])
+        # def len
+        width_in_chars = 15
+
+        # get list
+        result, message, host_list = self._timekprAdminConnector.getHostList()
+
+        # all ok
+        if result == 0:
+            # loop and print
+            for host in host_list:
+                # name
+                host_name = "%s (%s)" % (host[0], host[1]) if (host[1] is not None and host[1] != "") else host[0]
+                # determine maxlen
+                width_in_chars = max(width_in_chars, len(host_name) - 3)
+                # add user
+                host_store.append([host[0], host_name])
+            # status
+            self.setTimekprStatus(False, "Host list retrieved")
+            # enable
+            self._timekprAdminFormBuilder.get_object("TimekprHostSelectionCB").set_sensitive(True)
+            self._timekprAdminFormBuilder.get_object("TimekprHostSelectionRefreshBT").set_sensitive(
+                self._timekprAdminFormBuilder.get_object("TimekprHostSelectionCB").get_sensitive()
+            )
+            # adjust width
+            self._timekprAdminFormBuilder.get_object("TimekprHostSelectionCBEntry").set_width_chars(width_in_chars)
+            # init first selection
+            self._timekprAdminFormBuilder.get_object("TimekprHostSelectionCB").set_active(0)
         else:
             # status
             self.setTimekprStatus(False, message)

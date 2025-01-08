@@ -18,15 +18,15 @@ if "/usr/lib/python3/dist-packages" not in sys.path:
 from timekpr.client.admin.adminprocessor import timekprAdminClient
 from timekpr.common.utils import misc
 
-# main start
-if __name__ == "__main__":
+
+def main():
     # simple self-running check
     if misc.checkAndSetRunning(os.path.splitext(os.path.basename(__file__))[0], getpass.getuser()):
         # get out
         sys.exit(0)
 
     # get our admin client
-    _timekprAdminClient = timekprAdminClient()
+    _timekprAdminClient = timekprAdminClient(remote=False)
 
     # this is needed for admin application to react to ctrl+c gracefully
     signal.signal(signal.SIGINT, _timekprAdminClient.finishTimekpr)
@@ -34,3 +34,7 @@ if __name__ == "__main__":
 
     # start up timekpr admin client
     _timekprAdminClient.startTimekprAdminClient(*sys.argv)
+
+
+if __name__ == "__main__":
+    main()
