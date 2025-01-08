@@ -16,7 +16,7 @@ jobs:
       - name: Build DEB Package
         run: |
           sudo apt-get update
-          sudo apt-get install debhelper dh-python po-debconf gir1.2-gtk-3.0 dpkg-dev build-essential devscripts
+          sudo apt-get install debhelper dh-python po-debconf gir1.2-gtk-3.0 dpkg-dev build-essential devscripts pybuild-plugin-pyproject python3-poetry-core
           # Copy script files around to stop .github from being added to the package then build the package
           mkdir PKG_SOURCE
           cp -Rf REPO/bin REPO/timekpr REPO/debian  REPO/README.md REPO/resource REPO/pyproject.toml REPO/poetry.lock PKG_SOURCE

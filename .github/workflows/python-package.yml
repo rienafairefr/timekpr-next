@@ -32,7 +32,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install libglib2.0-dev libdbus-1-dev python3-dbus
+        sudo apt-get install libglib2.0-dev libdbus-1-dev python3-dbus libglib2.0-dev libcairo-dev \
+          libgirepository1.0-dev python3-gi gobject-introspection gir1.2-gtk-3.0
         poetry install --with=dev
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
     - name: Lint with black flake8
