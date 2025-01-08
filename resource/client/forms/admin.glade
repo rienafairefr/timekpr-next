@@ -317,7 +317,21 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="TimekprHostSelectionLS">
+    <columns>
+      <!-- column-name hostIdx -->
+      <column type="gchararray"/>
+      <!-- column-name hostName -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkImage" id="TimekprUserSelectionRefreshBTImage">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="xpad">5</property>
+    <property name="stock">gtk-revert-to-saved</property>
+  </object>
+  <object class="GtkImage" id="TimekprHostSelectionRefreshBTImage">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="xpad">5</property>
@@ -446,12 +460,97 @@ Please configure carefully: do not lock yourself out!</property>
                 <property name="position">1</property>
               </packing>
             </child>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="padding">10</property>
             <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="TimekprHostSelectionLabelBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkLabel" id="TimekprHostSelectionLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-top">10</property>
+                <property name="label" translatable="yes">Host:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">10</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="TimekprHostSelectionBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkComboBox" id="TimekprHostSelectionCB">
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">List of usernames registered on the system</property>
+                <property name="margin-top">5</property>
+                <property name="margin-bottom">10</property>
+                <property name="model">TimekprHostSelectionLS</property>
+                <property name="has-frame">False</property>
+                <property name="has-entry">True</property>
+                <property name="entry-text-column">1</property>
+                <property name="id-column">0</property>
+                <child internal-child="entry">
+                  <object class="GtkEntry">
+                    <property name="can-focus">False</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="padding">10</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="TimekprHostSelectionRefreshBT">
+                <property name="label" translatable="yes">Fetch</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Fetch configuration from current saved state</property>
+                <property name="margin-bottom">10</property>
+                <property name="image">TimekprHostSelectionRefreshBTImage</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -3830,7 +3929,7 @@ This is a PlayTime master switch, if it's turned off, it's turned off for everyo
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child>
@@ -3876,7 +3975,7 @@ This is a PlayTime master switch, if it's turned off, it's turned off for everyo
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
