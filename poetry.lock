@@ -232,12 +232,12 @@ files = [
 
 [[package]]
 name = "dbus-python"
-version = "1.3.2"
+version = "1.5.1"
 description = "Python bindings for libdbus"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "dbus-python-1.3.2.tar.gz", hash = "sha256:ad67819308618b5069537be237f8e68ca1c7fcc95ee4a121fe6845b1418248f8"},
+    {file = "dbus_python-1.5.1.tar.gz", hash = "sha256:57423cf87d09b7d084f420b55b737fe654c33339b06df77945620d97795c6ac4"},
 ]
 
 [package.extras]
